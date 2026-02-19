@@ -112,7 +112,7 @@
             opacity="0.3"></a-grid>
 
         <!-- Camera -->
-        <a-camera position="0 1.6 3" look-controls="enabled: false"></a-camera>
+        <a-camera position="0 1.2 2" look-controls="enabled: false"></a-camera>
 
         <!-- Game Anchor (Object spawn point) -->
         <a-entity id="balance-anchor" position="0 0 0">
@@ -140,7 +140,7 @@
 
         console.log('[Game] Cargando modelo:', modelFile);
         gameModel.setAttribute('gltf-model', `./${modelFile}`);
-        gameModel.setAttribute('scale', '2.5 2.5 2.5'); // Aumentado para mejor visibilidad
+        gameModel.setAttribute('scale', '8 8 8'); // ¡Mucho más grande!
 
         gameModel.addEventListener('model-loaded', () => {
             console.log('[Game] Modelo cargado con éxito');
@@ -205,9 +205,9 @@
                 // Aplicar rotación suave
                 this.el.object3D.rotation.z = THREE.MathUtils.degToRad(finalZ);
 
-                // 3. Verificación de estabilidad (Umbral de 6 grados)
+                // 3. Verificación de estabilidad (Umbral de 18 grados - muy fácil)
                 const error = Math.abs(finalZ);
-                if (error < 10) { // Umbral más permisivo (era 6)
+                if (error < 18) { // Umbral muy permisivo (era 10)
                     this.stabilityTime += delta;
                     const progress = (this.stabilityTime / 3000) * 100;
                     this.statusMsg.textContent = `Equilibrando: ${(this.stabilityTime / 1000).toFixed(1)}s`;
