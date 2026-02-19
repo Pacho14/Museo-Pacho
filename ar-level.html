@@ -110,6 +110,23 @@
             animation: pulse-gold 2s infinite;
         }
 
+        #ar-button-custom {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background: #818CF8;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            z-index: 1000;
+            pointer-events: auto;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
         @keyframes pulse-gold {
             0% {
                 transform: translateX(-50%) scale(1);
@@ -132,6 +149,7 @@
 <body>
 
     <button class="exit-btn" onclick="window.location.href='index.html'">✕</button>
+    <button id="ar-button-custom" onclick="requestPermissionsAndEnterAR()">INICIAR REALIDAD AUMENTADA</button>
 
     <div id="ui-overlay">
         <div class="game-title">Balance Challenge</div>
@@ -301,6 +319,41 @@
 
         function retryGame() {
             window.location.reload();
+        }
+
+        // --- Permissions & AR Entry ---
+        const arBtn = document.getElementById('ar-button-custom');
+
+        // Mostrar botón solo si es móvil y soporta AR
+        window.addEventListener('load', () => {
+            if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+                arBtn.style.display = 'block';
+            }
+        });
+
+        function requestPermissionsAndEnterAR() {
+            // Solicitar permisos de giroscopio (Solo iOS 13+)
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(response => {
+                        if (response == 'granted') {
+                            console.log('[Permisos] Giroscopio concedido');
+                            enterAR();
+                        } else {
+                            alert('Se requiere permiso de movimiento para el juego.');
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Android o versiones viejas de iOS
+                enterAR();
+            }
+        }
+
+        function enterAR() {
+            const scene = document.querySelector('a-scene');
+            scene.enterVR();
+            arBtn.style.display = 'none';
         }
 
         window.addEventListener('click', () => {
