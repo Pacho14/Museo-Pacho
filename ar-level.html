@@ -140,7 +140,7 @@
 
         console.log('[Game] Cargando modelo:', modelFile);
         gameModel.setAttribute('gltf-model', `./${modelFile}`);
-        gameModel.setAttribute('scale', '1 1 1'); // Escala base
+        gameModel.setAttribute('scale', '2.5 2.5 2.5'); // Aumentado para mejor visibilidad
 
         gameModel.addEventListener('model-loaded', () => {
             console.log('[Game] Modelo cargado con éxito');
@@ -158,7 +158,7 @@
             init: function () {
                 this.swayAngle = 0;
                 this.userCompensation = 0;
-                this.amplitude = 18;
+                this.amplitude = 12; // Reducido para bajar dificultad
                 this.stabilityTime = 0;
                 this.isWon = false;
                 this.statusMsg = document.getElementById('status-msg');
@@ -207,7 +207,7 @@
 
                 // 3. Verificación de estabilidad (Umbral de 6 grados)
                 const error = Math.abs(finalZ);
-                if (error < 6) {
+                if (error < 10) { // Umbral más permisivo (era 6)
                     this.stabilityTime += delta;
                     const progress = (this.stabilityTime / 3000) * 100;
                     this.statusMsg.textContent = `Equilibrando: ${(this.stabilityTime / 1000).toFixed(1)}s`;
