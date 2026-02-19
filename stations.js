@@ -48,8 +48,8 @@ const STATIONS = [
     accentColor: "#8B5CF6",
     glowColor: "#A78BFA",
     activity: {
-      type: "gallery",
-      label: "Explorar en Inmersión 3D"
+      type: "ring-tryon",
+      label: "Probarse Anillo"
     }
   },
   {

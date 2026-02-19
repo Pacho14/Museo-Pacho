@@ -372,21 +372,21 @@
     };
 
     function launchActivity(station) {
-        console.log(`[HubWorld] Launching AR for station ${station.id}: ${station.name}`);
+        console.log(`[HubWorld] Launching activity for station ${station.id}: ${station.name}`);
         const modelFile = station.glb || 'arduino 2.glb';
 
-        // Determinar destino según la estación
-        // Estación 2: Juego de Equilibrio
-        // Estación 4: Photo Mode / Viewer
-        let targetPage = 'ar-viewer.html'; // Default por ahora
+        let targetPage = 'ar-viewer.html';
 
         if (station.id === 2) {
             targetPage = 'ar-level.html';
+        } else if (station.id === 3) {
+            // New interaction from Venezia-2
+            window.location.href = 'ring-tryon.html';
+            return;
         } else if (station.id === 4) {
             targetPage = 'ar-viewer.html';
         }
 
-        // Redirigir con delay para feedback visual
         setTimeout(() => {
             window.location.href = `${targetPage}?model=${encodeURIComponent(modelFile)}`;
         }, 500);

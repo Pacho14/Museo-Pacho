@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probador Virtual de Anillo — Museo de Pacho</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: 'Inter', -apple-system, sans-serif;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Video oculto pero procesado */
+        .input_video {
+            display: none;
+            position: absolute;
+        }
+
+        .output_canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Botón de Salir */
+        .exit-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .exit-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Pantalla de inicio */
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #start-screen h1 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #818CF8;
+        }
+
+        #start-btn {
+            background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 16px 32px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            transition: transform 0.2s;
+        }
+
+        #start-btn:active {
+            transform: scale(0.95);
+        }
+
+        #loading {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 1500;
+        }
+
+        .hint-text {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            pointer-events: none;
+        }
+    </style>
+
+    <!-- MediaPipe Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <video class="input_video" playsinline></video>
+        <canvas class="output_canvas"></canvas>
+    </div>
+
+    <button class="exit-btn" onclick="window.location.href='index.html'">✕</button>
+
+    <div id="start-screen">
+        <h1>Probador de Anillo Inmersivo</h1>
+        <p style="margin-bottom: 30px; opacity: 0.8;">Muestra tu mano a la cámara para probarte el anillo de diamante de
+            la Sala Arte.</p>
+        <button id="start-btn">Iniciar Experiencia</button>
+    </div>
+
+    <div id="loading" style="display: none;">Cargando sistema de IA...</div>
+    <div class="hint-text">Muestra tu mano frente a la cámara</div>
+
+    <script type="module" src="ring-tryon.js"></script>
+</body>
+
+</html>
