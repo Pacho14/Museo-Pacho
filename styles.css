@@ -418,3 +418,120 @@ body.cinematic #hint-bar {
     font-size: 0.75rem;
   }
 }
+
+/* ── CONTROLS GUIDE PREMIUM ── */
+#controls-guide {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 90%;
+  max-width: 320px;
+  background: rgba(28, 27, 31, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  padding: 32px;
+  z-index: 2000;
+  color: white;
+  text-align: center;
+  pointer-events: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s cubic-bezier(0.2, 0, 0, 1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+
+#controls-guide.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+#controls-guide h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 24px;
+  letter-spacing: 2px;
+  color: #D0BCFF;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+kbd {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-family: monospace;
+  min-width: 50px;
+  text-align: center;
+}
+
+#close-guide {
+  margin-top: 24px;
+  padding: 12px 32px;
+  border-radius: 100px;
+  border: none;
+  background: #D0BCFF;
+  color: #1a1625;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+#close-guide:hover {
+  transform: scale(1.05);
+}
+
+#help-toggle {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(28, 27, 31, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 1500;
+  pointer-events: auto;
+  transition: all 0.3s;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+#help-toggle:hover {
+  background: #D0BCFF;
+  color: #1a1625;
+  transform: translateY(-4px);
+}
+
+body.is-mobile #guide-desktop {
+  display: none;
+}
+
+body.is-mobile #guide-mobile {
+  display: block;
+}
+
+body:not(.is-mobile) #guide-mobile {
+  display: none;
+}
+
+body:not(.is-mobile) #guide-desktop {
+  display: block;
+}
