@@ -43,7 +43,7 @@ const STATIONS = [
     description: "Obras de artistas locales y regionales\nen diálogo con el patrimonio,\ntradición y vanguardia reunidas.",
     angle: 144,
     radius: 8,
-    glb: null,
+    glb: "uploads_files_4601352_Diamond+ring.glb",
     color: "#B8A8C8",
     accentColor: "#8B5CF6",
     glowColor: "#A78BFA",
