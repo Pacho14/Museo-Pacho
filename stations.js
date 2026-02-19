@@ -11,7 +11,7 @@ const STATIONS = [
     description: "Explora la colección central del Museo de Pacho.\nPiezas seleccionadas del acervo histórico\nque definen nuestra identidad cultural.",
     angle: 0,
     radius: 8,
-    glb: null,
+    glb: "Arduino.glb",
     color: "#C7B89A",
     accentColor: "#6366F1",
     glowColor: "#818CF8",

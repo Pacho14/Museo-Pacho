@@ -113,11 +113,13 @@
         material="roughness: 0.85; flatShading: true; emissive: #2a2445; emissiveIntensity: 0.3">
       </a-cylinder>
 
-      <!-- Estación 1: Tetraedro (placeholder) -->
-      <a-tetrahedron id="glb-1" position="0 1.1 0" radius="0.6" color="#818CF8" class="interactive"
-        cursor-listener="stationId: 1" data-initial-scale="1"
-        material="roughness: 0.65; flatShading: true; emissive: #6366F1; emissiveIntensity: 0.15"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 24000; easing: linear"></a-tetrahedron>
+      <!-- Estación 1: Arduino (Pieza 1) -->
+      <a-entity id="glb-1-container" position="0 0.75 0">
+        <a-gltf-model id="glb-1" src="./Arduino.glb" scale="1 1 1" class="interactive" cursor-listener="stationId: 1"
+          auto-scale="maxSize: 2.0" animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear">
+          <a-light type="point" intensity="1.5" distance="4" color="#fff"></a-light>
+        </a-gltf-model>
+      </a-entity>
 
       <!-- Station label 3D -->
       <a-text value="Sala Memphiana" align="center" color="#E0DDFF" width="4" position="0 3.0 0" font="roboto"
