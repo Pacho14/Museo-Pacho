@@ -27,6 +27,9 @@
     const loadingScreen = document.getElementById("loading-screen");
     const backBtn = document.getElementById("back-to-hub");
     const portalOverlay = document.getElementById("portal-overlay");
+    const controlsGuide = document.getElementById("controls-guide");
+    const closeGuideBtn = document.getElementById("close-guide");
+    const helpToggle = document.getElementById("help-toggle");
 
     // ─── Init ────────────────────────────────────────────────────────
     function init() {
@@ -35,6 +38,11 @@
         hideLoadingScreen();
         if (isMobile) initJoystick();
         setTimeout(() => { hintBar.classList.add("hide"); hintHidden = true; }, 8000);
+
+        // Mostrar guía premium al inicio tras fade-out de loading
+        setTimeout(() => {
+            if (controlsGuide) controlsGuide.classList.add("visible");
+        }, 1500);
     }
 
     function initJoystick() {
@@ -105,6 +113,19 @@
     function bindEvents() {
         backBtn.addEventListener("click", returnToHub);
         document.addEventListener("keydown", e => { if (e.key === "Escape") returnToHub(); });
+
+        // Guía de controles
+        if (closeGuideBtn) {
+            closeGuideBtn.addEventListener("click", () => {
+                controlsGuide.classList.remove("visible");
+            });
+        }
+
+        if (helpToggle) {
+            helpToggle.addEventListener("click", () => {
+                controlsGuide.classList.add("visible");
+            });
+        }
     }
 
     // ─── HOVER: Glow + Label ─────────────────────────────────────────
