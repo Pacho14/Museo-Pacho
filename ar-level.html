@@ -10,7 +10,7 @@
             margin: 0;
             overflow: hidden;
             font-family: 'Inter', sans-serif;
-            background: #000;
+            background: #0a0a10;
         }
 
         #ui-overlay {
@@ -38,27 +38,31 @@
         }
 
         #status-msg {
-            background: rgba(0, 0, 0, 0.7);
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.8);
             color: #fff;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
             transition: all 0.3s ease;
+            font-size: 0.95rem;
+            text-align: center;
         }
 
         .win-msg {
             color: #FBBF24 !important;
             border-color: #FBBF24 !important;
-            transform: scale(1.2);
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.4);
         }
 
         #instruction {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
             margin-bottom: 20px;
             text-align: center;
+            max-width: 80%;
         }
 
         .exit-btn {
@@ -67,15 +71,21 @@
             left: 20px;
             width: 44px;
             height: 44px;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             pointer-events: auto;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(5px);
+            z-index: 20;
+        }
+
+        .exit-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
@@ -86,30 +96,39 @@
 
     <div id="ui-overlay">
         <div class="game-title">Balance Challenge</div>
-        <div id="status-msg">Busca una superficie plana...</div>
-        <div id="instruction">Mueve tu móvil para estabilizar el objeto</div>
+        <div id="status-msg">Cargando experiencia...</div>
+        <div id="instruction">En móvil: inclina el dispositivo lateralmente.<br>En PC: mueve el mouse de izquierda a
+            derecha.</div>
     </div>
 
     <a-scene webxr="optionalFeatures: hit-test; requiredFeatures: local-floor;"
-        renderer="colorManagement: true; antialias: true;" ar-hit-test="target: #balance-anchor; type: footprint;">
-        <a-assets>
-            <!-- Model loaded dynamically via JS -->
-        </a-assets>
+        renderer="colorManagement: true; antialias: true;" ar-hit-test="target: #balance-anchor; type: footprint;"
+        device-orientation-permission-ui="enabled: true">
+        <!-- Sky for Desktop testing -->
+        <a-sky color="#1a1a2e" radius="30"></a-sky>
+
+        <!-- Grid for Desktop testing -->
+        <a-grid id="desktop-floor" position="0 -0.01 0" rotation="-90 0 0" width="20" height="20" src="" color="#303050"
+            opacity="0.3"></a-grid>
 
         <!-- Camera -->
-        <a-camera position="0 1.6 0" look-controls="enabled: false"></a-camera>
+        <a-camera position="0 1.6 3" look-controls="enabled: false"></a-camera>
 
         <!-- Game Anchor (Object spawn point) -->
-        <a-entity id="balance-anchor" visible="false">
-            <!-- The model will be appended here -->
-            <a-entity id="game-model" balance-game></a-entity>
+        <a-entity id="balance-anchor" position="0 0 0">
+            <!-- The model container -->
+            <a-entity id="model-container" balance-game>
+                <a-entity id="game-model"></a-entity>
+            </a-entity>
 
-            <!-- Visual cue for placement -->
-            <a-ring rotation="-90 0 0" radius-inner="0.1" radius-outer="0.15" color="#818CF8" opacity="0.6"></a-ring>
+            <!-- Visual cue for placement (Only needed for AR) -->
+            <a-ring id="ar-ring" rotation="-90 0 0" radius-inner="0.1" radius-outer="0.15" color="#818CF8"
+                opacity="0.6"></a-ring>
         </a-entity>
 
-        <a-light type="ambient" intensity="0.6"></a-light>
-        <a-light type="directional" position="1 2 1" intensity="0.8"></a-light>
+        <a-light type="ambient" intensity="0.7"></a-light>
+        <a-light type="directional" position="1 4 2" intensity="1.2" color="#fff"></a-light>
+        <a-light type="point" position="-2 3 -1" intensity="0.5" color="#818CF8"></a-light>
     </a-scene>
 
     <script>
@@ -117,58 +136,91 @@
         const urlParams = new URLSearchParams(window.location.search);
         const modelFile = urlParams.get('model') || 'arduino 2.glb';
         const gameModel = document.getElementById('game-model');
+        const statusMsg = document.getElementById('status-msg');
 
+        console.log('[Game] Cargando modelo:', modelFile);
         gameModel.setAttribute('gltf-model', `./${modelFile}`);
-        gameModel.setAttribute('scale', '0.5 0.5 0.5'); // Escala inicial AR
+        gameModel.setAttribute('scale', '1 1 1'); // Escala base
+
+        gameModel.addEventListener('model-loaded', () => {
+            console.log('[Game] Modelo cargado con éxito');
+            statusMsg.textContent = "¡Modelo Cargado! Busca una superficie AR o usa tu mouse.";
+        });
+
+        gameModel.addEventListener('model-error', (e) => {
+            console.error('[Game] Error cargando el modelo:', e);
+            statusMsg.textContent = "Error al cargar el modelo 3D.";
+            statusMsg.style.borderColor = "#ff4444";
+        });
 
         // --- Componente de Juego de Equilibrio ---
         AFRAME.registerComponent('balance-game', {
             init: function () {
                 this.swayAngle = 0;
-                this.userTilt = 0;
-                this.amplitude = 15; // Intensidad inicial del balanceo
+                this.userCompensation = 0;
+                this.amplitude = 18;
                 this.stabilityTime = 0;
                 this.isWon = false;
                 this.statusMsg = document.getElementById('status-msg');
+                this.isAR = false;
 
-                // Escuchar giroscopio
+                // 1. Giroscopio (Móvil)
                 window.addEventListener('deviceorientation', (event) => {
-                    // Usamos gamma (inclinación lateral) para compensar
-                    this.userTilt = event.gamma || 0;
+                    if (event.gamma !== null) {
+                        this.userCompensation = event.gamma;
+                    }
                 });
 
-                this.el.addEventListener('model-loaded', () => {
-                    this.statusMsg.textContent = "¡Objeto listo! Estabilízalo.";
+                // 2. Mouse Fallback (Desktop)
+                window.addEventListener('mousemove', (e) => {
+                    if (!this.isAR) {
+                        // Mapeamos el centro de la pantalla como 0, y los bordes como -45 a 45 grados
+                        let x = (e.clientX / window.innerWidth) - 0.5;
+                        this.userCompensation = x * 90;
+                    }
+                });
+
+                // Detectar si entramos en AR
+                this.el.sceneEl.addEventListener('enter-vr', () => {
+                    if (this.el.sceneEl.is('ar-mode')) {
+                        this.isAR = true;
+                        this.statusMsg.textContent = "Modo AR: Escaneando suelo...";
+                        document.getElementById('desktop-floor').setAttribute('visible', false);
+                    }
                 });
             },
 
             tick: function (time, delta) {
                 if (this.isWon) return;
 
-                // 1. Balanceo procedural (Caos orgánico)
-                const naturalSway = Math.sin(time / 400) * this.amplitude;
+                // 1. Balanceo procedural (Caos rítmico)
+                // Usamos una frecuencia ligeramente variable para que no sea predecible
+                const naturalSway = Math.sin(time / 450) * this.amplitude;
 
-                // 2. Compensación del usuario
-                // Mapeamos el tilt del dispositivo (-30 a 30 grados aprox)
-                const compensation = this.userTilt * 0.8;
+                // 2. Compensación (Inclinación física o mouse)
+                // Invertimos la relación: si el objeto se inclina a la derecha, 
+                // el usuario debe inclinar el dispositivo a la izquierda.
+                const finalZ = naturalSway + (this.userCompensation * 0.85);
 
-                // 3. Rotación final
-                const finalZ = naturalSway + compensation;
+                // Aplicar rotación suave
                 this.el.object3D.rotation.z = THREE.MathUtils.degToRad(finalZ);
 
-                // 4. Verificación de estabilidad
+                // 3. Verificación de estabilidad (Umbral de 6 grados)
                 const error = Math.abs(finalZ);
-                if (error < 5) { // Si el error es menor a 5 grados
+                if (error < 6) {
                     this.stabilityTime += delta;
-                    this.statusMsg.textContent = `Estabilizando... ${(this.stabilityTime / 1000).toFixed(1)}s`;
+                    const progress = (this.stabilityTime / 3000) * 100;
+                    this.statusMsg.textContent = `Equilibrando: ${(this.stabilityTime / 1000).toFixed(1)}s`;
+                    this.statusMsg.style.background = `linear-gradient(90deg, #34D399 ${progress}%, rgba(0,0,0,0.8) ${progress}%)`;
                     this.statusMsg.style.borderColor = "#34D399";
                 } else {
                     this.stabilityTime = 0;
-                    this.statusMsg.textContent = "¡Cuidado! Se inclina...";
-                    this.statusMsg.style.borderColor = "rgba(255,255,255,0.2)";
+                    this.statusMsg.textContent = "¡Cuidado! Se está cayendo...";
+                    this.statusMsg.style.background = "rgba(0,0,0,0.8)";
+                    this.statusMsg.style.borderColor = "#ff4444";
                 }
 
-                // 5. Victoria
+                // 4. Victoria
                 if (this.stabilityTime > 3000) {
                     this.victory();
                 }
@@ -177,39 +229,38 @@
             victory: function () {
                 this.isWon = true;
                 this.statusMsg.textContent = "¡NIVEL COMPLETADO! 🏆";
+                this.statusMsg.style.background = "#FBBF24";
+                this.statusMsg.style.color = "#000";
                 this.statusMsg.classList.add("win-msg");
 
                 // Animación de recompensa
                 this.el.setAttribute('animation', {
                     property: 'rotation',
                     to: '0 360 0',
-                    dur: 1000,
-                    loop: 2,
+                    dur: 800,
+                    loop: 3,
                     easing: 'easeInOutQuad'
                 });
 
-                // Partículas/Brillo (simulado con luz)
+                // Partículas/Brillo
                 const light = document.createElement('a-light');
                 light.setAttribute('type', 'point');
-                light.setAttribute('intensity', '3');
+                light.setAttribute('intensity', '4');
                 light.setAttribute('color', '#FBBF24');
+                light.setAttribute('position', '0 1 0');
                 this.el.appendChild(light);
+
+                console.log('[Game] Victoria alcanzada');
             }
         });
 
-        // --- Lógica de Hit Test (Detección de suelo) ---
-        const anchor = document.getElementById('balance-anchor');
-        document.querySelector('a-scene').addEventListener('enter-vr', () => {
-            if (document.querySelector('a-scene').is('ar-mode')) {
-                document.getElementById('status-msg').textContent = "Escaneando suelo...";
-            }
-        });
-
-        // Evento de click/tap en AR para fijar el objeto
+        // Tap to fix model position in AR
         window.addEventListener('click', () => {
-            if (anchor.getAttribute('visible')) {
-                // Ya visible, lo fijamos (podríamos desactivar el hit-test aquí si quisiéramos)
-                document.getElementById('status-msg').textContent = "¡Equilibra el objeto!";
+            const scene = document.querySelector('a-scene');
+            if (scene.is('ar-mode')) {
+                const anchor = document.getElementById('balance-anchor');
+                document.getElementById('ar-ring').setAttribute('visible', false);
+                statusMsg.textContent = "¡Posición fijada! ¡Equilíbralo!";
             }
         });
     </script>
