@@ -1,0 +1,375 @@
+/* styles.css — Hub World Museum UI — Cinematic Mode */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg: #F5F2EE;
+  --color-surface: rgba(255, 255, 255, 0.85);
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-text: #1C1917;
+  --color-text-muted: #78716C;
+  --color-accent: #6366F1;
+  --radius: 16px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+/* ── A-Frame canvas ── */
+a-scene {
+  position: fixed;
+  inset: 0;
+}
+
+/* ── HUD Container ── */
+#hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── Top Bar ── */
+#top-bar {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border);
+  border-radius: 50px;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  box-shadow: var(--shadow);
+  transition: opacity 0.5s ease;
+}
+
+#top-bar .museum-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+#top-bar .sep {
+  width: 1px;
+  height: 14px;
+  background: var(--color-border);
+}
+
+#top-bar .hub-name {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Crosshair ── */
+#crosshair {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  opacity: 0.4;
+  transition: opacity 0.4s ease;
+}
+
+#crosshair::before,
+#crosshair::after {
+  content: '';
+  position: absolute;
+  background: white;
+  border-radius: 2px;
+}
+
+#crosshair::before {
+  width: 2px;
+  height: 100%;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#crosshair::after {
+  width: 100%;
+  height: 2px;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+/* ── Station hover label ── */
+#station-label {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  padding: 10px 22px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+#station-label.visible {
+  opacity: 1;
+  transform: translate(-50%, calc(-50% - 100px));
+}
+
+/* ── Hint bar ── */
+#hint-bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  padding: 8px 20px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+
+#hint-bar.hide {
+  opacity: 0;
+}
+
+/* ── Station nav dots ── */
+#station-nav {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  display: flex;
+  gap: 8px;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.station-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.station-dot.active {
+  background: var(--color-accent);
+  transform: scale(1.4);
+}
+
+/* ── Back to Hub button ── */
+#back-to-hub {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 50px;
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  pointer-events: all;
+  transition: background 0.2s ease, transform 0.15s ease, opacity 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  z-index: 20;
+}
+
+#back-to-hub.visible {
+  display: flex;
+}
+
+#back-to-hub:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: translateY(-1px);
+}
+
+#back-to-hub svg {
+  flex-shrink: 0;
+}
+
+/* ── Portal overlay ── */
+#portal-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.95) 100%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#portal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#portal-overlay .portal-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 300px;
+  height: 300px;
+  border: 3px solid var(--color-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 60px var(--color-accent), 0 0 120px var(--color-accent), inset 0 0 60px var(--color-accent);
+  animation: portalExpand 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes portalExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(4);
+    opacity: 0;
+  }
+}
+
+#portal-overlay .portal-flash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  animation: portalFlash 1.2s ease forwards;
+  animation-delay: 0.6s;
+}
+
+@keyframes portalFlash {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ── Loading screen ── */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  z-index: 100;
+  transition: opacity 0.6s ease;
+}
+
+#loading-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-ring {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader-text {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.04em;
+}
+
+/* ── Cinematic mode adjustments ── */
+body.cinematic #top-bar {
+  opacity: 0.3;
+}
+
+body.cinematic #crosshair {
+  opacity: 0;
+}
+
+body.cinematic #station-nav {
+  opacity: 0.3;
+}
+
+body.cinematic #hint-bar {
+  opacity: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  #top-bar {
+    top: 12px;
+    padding: 8px 16px;
+  }
+
+  #back-to-hub {
+    top: 12px;
+    left: 12px;
+    padding: 8px 14px;
+    font-size: 0.75rem;
+  }
+}

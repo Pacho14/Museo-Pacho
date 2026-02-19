@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="description"
+    content="Museo de Pacho — Hub World interactivo 3D. Explora cinco salas temáticas en una experiencia inmersiva." />
+  <title>Museo de Pacho — Hub World</title>
+
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="stations.js"></script>
+</head>
+
+<body>
+
+  <!-- ── Loading screen ── -->
+  <div id="loading-screen">
+    <div class="loader-ring"></div>
+    <p class="loader-text">Cargando Hub World…</p>
+  </div>
+
+  <!-- ── A-Frame 3D Scene ── -->
+  <a-scene id="main-scene" renderer="antialias: true; colorManagement: true;" vr-mode-ui="enabled: false"
+    loading-screen="enabled: false" fog="type: exponential; color: #1a1820; density: 0.02">
+
+    <!-- Assets: skipping a-assets for GLB to avoid file:// CORS issues -->
+    <!-- GLB is loaded directly via src attribute on gltf-model -->
+
+    <!-- ── Sky ── -->
+    <a-sky id="sky" color="#1e1c28"></a-sky>
+
+    <!-- ── Lighting ── -->
+    <a-light id="ambient-light" type="ambient" color="#8888AA" intensity="0.6"></a-light>
+    <a-light id="dir-light-1" type="directional" color="#C8B4FF" intensity="1.0" position="6 12 4"></a-light>
+    <a-light id="dir-light-2" type="directional" color="#6EC8F5" intensity="0.35" position="-8 6 -6"></a-light>
+
+    <!-- Spotlight (hidden until cinematic mode) -->
+    <a-light id="spotlight" type="spot" color="#fff" intensity="0" angle="35" penumbra="0.6" decay="1.5"
+      position="0 6 0"></a-light>
+
+    <!-- ── GROUND ── -->
+    <!-- Central hex platform -->
+    <a-cylinder id="platform-center" position="0 -0.05 0" radius="3.5" height="0.2" segments-radial="6" color="#2A2736"
+      material="roughness: 0.9; metalness: 0.1; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.3">
+    </a-cylinder>
+
+    <!-- Inner disc -->
+    <a-cylinder position="0 0.06 0" radius="1.4" height="0.08" segments-radial="6" color="#352F4A"
+      material="roughness: 0.85; metalness: 0.15; flatShading: true; emissive: #2a2540; emissiveIntensity: 0.2">
+    </a-cylinder>
+
+    <!-- Center glow ring -->
+    <a-torus position="0 0.08 0" radius="1.2" radius-tubular="0.025" segments-tubular="48" segments-radial="8"
+      color="#6366F1" material="emissive: #6366F1; emissiveIntensity: 0.6; opacity: 0.7; transparent: true"
+      animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
+    </a-torus>
+
+    <!-- Ground plane -->
+    <a-plane position="0 -0.15 0" rotation="-90 0 0" width="60" height="60" color="#16141F"
+      material="roughness: 1.0; metalness: 0.0; flatShading: true">
+    </a-plane>
+
+    <!-- ── Floating particles (ambient atmosphere) ── -->
+    <a-entity id="particles">
+      <a-sphere position="2 3 -5" radius="0.04" color="#818CF8"
+        material="emissive: #818CF8; emissiveIntensity: 1; opacity: 0.6; transparent: true"
+        animation="property: position; to: 2.5 4 -5.3; dur: 4000; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
+      <a-sphere position="-4 2.5 -3" radius="0.03" color="#34D399"
+        material="emissive: #34D399; emissiveIntensity: 1; opacity: 0.5; transparent: true"
+        animation="property: position; to: -3.5 3.5 -3.5; dur: 5000; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
+      <a-sphere position="5 4 2" radius="0.05" color="#A78BFA"
+        material="emissive: #A78BFA; emissiveIntensity: 1; opacity: 0.4; transparent: true"
+        animation="property: position; to: 4.5 3 2.5; dur: 6000; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
+      <a-sphere position="-3 1.5 5" radius="0.035" color="#FBBF24"
+        material="emissive: #FBBF24; emissiveIntensity: 1; opacity: 0.5; transparent: true"
+        animation="property: position; to: -2.5 2.5 4.5; dur: 4500; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
+      <a-sphere position="6 3.5 -1" radius="0.04" color="#F472B6"
+        material="emissive: #F472B6; emissiveIntensity: 1; opacity: 0.45; transparent: true"
+        animation="property: position; to: 5.5 2.5 -0.5; dur: 5500; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
+      <a-sphere position="-6 2 -6" radius="0.03" color="#22D3EE"
+        material="emissive: #22D3EE; emissiveIntensity: 1; opacity: 0.5; transparent: true"
+        animation="property: position; to: -5.5 3 -5.5; dur: 3800; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
+      <a-sphere position="1 5 4" radius="0.045" color="#C084FC"
+        material="emissive: #C084FC; emissiveIntensity: 1; opacity: 0.4; transparent: true"
+        animation="property: position; to: 0.5 4 3.5; dur: 7000; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
+      <a-sphere position="-1 4 -7" radius="0.04" color="#FB923C"
+        material="emissive: #FB923C; emissiveIntensity: 1; opacity: 0.45; transparent: true"
+        animation="property: position; to: -0.5 3 -6.5; dur: 4200; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
+    </a-entity>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- ── STATION 1 ─ 0° ─ Sala Memphiana ──────────────────────── -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <a-entity id="station-1" position="0 0 -8">
+      <!-- Walkway -->
+      <a-box position="0 -0.07 4" width="1.4" height="0.1" depth="8" color="#252233"
+        material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2">
+      </a-box>
+      <!-- Walkway glow strips -->
+      <a-box position="-0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#6366F1"
+        material="emissive: #6366F1; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+      <a-box position="0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#6366F1"
+        material="emissive: #6366F1; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+
+      <!-- Platform -->
+      <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2A2540"
+        material="roughness: 0.85; flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2">
+      </a-cylinder>
+      <!-- Pedestal -->
+      <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#352F50"
+        material="roughness: 0.85; flatShading: true; emissive: #2a2445; emissiveIntensity: 0.3">
+      </a-cylinder>
+
+      <!-- Estación 1: Tetraedro (placeholder) -->
+      <a-tetrahedron id="glb-1" position="0 1.1 0" radius="0.6" color="#818CF8" class="interactive"
+        cursor-listener="stationId: 1" data-initial-scale="1"
+        material="roughness: 0.65; flatShading: true; emissive: #6366F1; emissiveIntensity: 0.15"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 24000; easing: linear"></a-tetrahedron>
+
+      <!-- Station label 3D -->
+      <a-text value="Sala Memphiana" align="center" color="#E0DDFF" width="4" position="0 3.0 0" font="roboto"
+        billboard></a-text>
+    </a-entity>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- ── STATION 2 ─ 72° ─ Sala Histórica ─────────────────────── -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <a-entity id="station-2" position="7.61 0 -2.47">
+      <a-box position="-3.8 -0.07 1.23" rotation="0 -18 0" width="1.4" height="0.1" depth="8" color="#252233"
+        material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
+      <a-box position="-3.22 -0.01 1.04" rotation="0 -18 0" width="0.06" height="0.01" depth="8" color="#10B981"
+        material="emissive: #10B981; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+      <a-box position="-4.38 -0.01 1.42" rotation="0 -18 0" width="0.06" height="0.01" depth="8" color="#10B981"
+        material="emissive: #10B981; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+
+      <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#222E28"
+        material="roughness: 0.85; flatShading: true; emissive: #1a2520; emissiveIntensity: 0.2"></a-cylinder>
+      <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#2D3F33"
+        material="roughness: 0.85; flatShading: true; emissive: #243528; emissiveIntensity: 0.3"></a-cylinder>
+
+      <!-- Placeholder: cube -->
+      <a-box id="glb-2" position="0 0.9 0" width="0.9" height="0.9" depth="0.9" color="#3D5A44" class="interactive"
+        cursor-listener="stationId: 2" data-initial-scale="1"
+        material="roughness: 0.7; flatShading: true; emissive: #10B981; emissiveIntensity: 0.15"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear"></a-box>
+
+      <!-- No glow ring here -->
+
+      <a-text value="Sala Histórica" align="center" color="#B0F5D8" width="4" position="0 3.0 0" font="roboto"
+        billboard></a-text>
+    </a-entity>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- ── STATION 3 ─ 144° ─ Sala Arte ─────────────────────────── -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <a-entity id="station-3" position="4.70 0 6.47">
+      <a-box position="-2.35 -0.07 -3.23" rotation="0 54 0" width="1.4" height="0.1" depth="8" color="#252233"
+        material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
+      <a-box position="-1.97 -0.01 -2.72" rotation="0 54 0" width="0.06" height="0.01" depth="8" color="#8B5CF6"
+        material="emissive: #8B5CF6; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+      <a-box position="-2.73 -0.01 -3.74" rotation="0 54 0" width="0.06" height="0.01" depth="8" color="#8B5CF6"
+        material="emissive: #8B5CF6; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+
+      <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2A2540"
+        material="roughness: 0.85; flatShading: true; emissive: #221F38; emissiveIntensity: 0.2"></a-cylinder>
+      <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#3A3055"
+        material="roughness: 0.85; flatShading: true; emissive: #302848; emissiveIntensity: 0.3"></a-cylinder>
+
+      <!-- Placeholder: octahedron -->
+      <a-octahedron id="glb-3" position="0 1.1 0" radius="0.6" color="#5A3D88" class="interactive"
+        cursor-listener="stationId: 3" data-initial-scale="1"
+        material="roughness: 0.65; flatShading: true; emissive: #8B5CF6; emissiveIntensity: 0.2"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 16000; easing: linear"></a-octahedron>
+
+      <!-- No glow ring here -->
+
+      <a-text value="Sala Arte" align="center" color="#D4C4FF" width="4" position="0 3.0 0" font="roboto"
+        billboard></a-text>
+    </a-entity>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- ── STATION 4 ─ 216° ─ Sala Naturaleza ───────────────────── -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <a-entity id="station-4" position="-4.70 0 6.47">
+      <a-box position="2.35 -0.07 -3.23" rotation="0 -54 0" width="1.4" height="0.1" depth="8" color="#252233"
+        material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
+      <a-box position="1.97 -0.01 -2.72" rotation="0 -54 0" width="0.06" height="0.01" depth="8" color="#22C55E"
+        material="emissive: #22C55E; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+      <a-box position="2.73 -0.01 -3.74" rotation="0 -54 0" width="0.06" height="0.01" depth="8" color="#22C55E"
+        material="emissive: #22C55E; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+
+      <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#1E2E22"
+        material="roughness: 0.85; flatShading: true; emissive: #18251C; emissiveIntensity: 0.2"></a-cylinder>
+      <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#2A4030"
+        material="roughness: 0.85; flatShading: true; emissive: #223528; emissiveIntensity: 0.3"></a-cylinder>
+
+      <!-- GLB: MEMPHIS3 (Exhibition Mode en Estación 4) -->
+      <a-entity id="glb-4-container" position="0 0.75 0">
+        <a-gltf-model id="glb-4" src="./MEMPHIS3.glb" scale="1 1 1" class="interactive" cursor-listener="stationId: 4"
+          auto-scale="maxSize: 2.2" animation="property: rotation; to: 0 360 0; loop: true; dur: 12000; easing: linear">
+          <a-light type="point" intensity="2" distance="4" color="#fff"></a-light>
+        </a-gltf-model>
+      </a-entity>
+
+      <a-text value="Sala Naturaleza" align="center" color="#A8F5C8" width="4" position="0 3.0 0" font="roboto"
+        billboard></a-text>
+    </a-entity>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- ── STATION 5 ─ 288° ─ Sala Comunidad ────────────────────── -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <a-entity id="station-5" position="-7.61 0 -2.47">
+      <a-box position="3.8 -0.07 1.23" rotation="0 18 0" width="1.4" height="0.1" depth="8" color="#252233"
+        material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
+      <a-box position="3.22 -0.01 1.04" rotation="0 18 0" width="0.06" height="0.01" depth="8" color="#F59E0B"
+        material="emissive: #F59E0B; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+      <a-box position="4.38 -0.01 1.42" rotation="0 18 0" width="0.06" height="0.01" depth="8" color="#F59E0B"
+        material="emissive: #F59E0B; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+
+      <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2E2818"
+        material="roughness: 0.85; flatShading: true; emissive: #252015; emissiveIntensity: 0.2"></a-cylinder>
+      <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#403820"
+        material="roughness: 0.85; flatShading: true; emissive: #352D18; emissiveIntensity: 0.3"></a-cylinder>
+
+      <!-- Placeholder: dodecahedron (Movido aquí desde la estación 4) -->
+      <a-dodecahedron id="glb-5" position="0 1.0 0" radius="0.55" color="#B58E2E" class="interactive"
+        cursor-listener="stationId: 5" data-initial-scale="1"
+        material="roughness: 0.65; flatShading: true; emissive: #F59E0B; emissiveIntensity: 0.15"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 22000; easing: linear"></a-dodecahedron>
+
+      <a-text value="Sala Comunidad" align="center" color="#FFE8A8" width="4" position="0 3.0 0" font="roboto"
+        billboard></a-text>
+    </a-entity>
+
+    <!-- ── Decorative columns ── -->
+    <a-cylinder position=" 2.4 0.6 0" radius="0.12" height="1.4" color="#2A2540"
+      material="flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2"></a-cylinder>
+    <a-cylinder position="-2.4 0.6 0" radius="0.12" height="1.4" color="#2A2540"
+      material="flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2"></a-cylinder>
+    <a-cylinder position=" 0   0.6 2.4" radius="0.12" height="1.4" color="#2A2540"
+      material="flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2"></a-cylinder>
+    <a-cylinder position=" 0   0.6 -2.4" radius="0.12" height="1.4" color="#2A2540"
+      material="flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2"></a-cylinder>
+
+    <!-- ── CAMERA ── -->
+    <a-entity id="camera-rig" position="0 3.5 8" rotation="-12 0 0">
+      <a-camera id="main-camera" look-controls="pointerLockEnabled: false; reverseMouseDrag: false"
+        wasd-controls="acceleration: 15; fly: false" cursor="rayOrigin: mouse; fuse: false"
+        raycaster="objects: .interactive; near: 0.1; far: 30">
+        <a-cursor color="#818CF8" fuse="false" radius-inner="0.008" radius-outer="0.014"
+          material="color: #818CF8; shader: flat; opacity: 0.8"></a-cursor>
+      </a-camera>
+    </a-entity>
+
+  </a-scene>
+
+  <!-- ── HUD Overlay ── -->
+  <div id="hud">
+    <div id="top-bar">
+      <span class="museum-name">Museo de Pacho</span>
+      <span class="sep"></span>
+      <span class="hub-name">Hub World</span>
+    </div>
+    <div id="crosshair"></div>
+    <div id="station-label"></div>
+    <div id="hint-bar">Mueve el mouse para explorar · Haz clic en un modelo para interactuar</div>
+    <div id="station-nav"></div>
+  </div>
+
+  <!-- Back to Hub button -->
+  <button id="back-to-hub">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+      stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    Volver al Hub
+  </button>
+
+  <!-- Portal overlay -->
+  <div id="portal-overlay">
+    <div class="portal-ring"></div>
+    <div class="portal-flash"></div>
+  </div>
+
+  <script>
+    // PRUEBA DE ALCANCE: Intentar cargar el archivo directamente para ver si el servidor lo entrega
+    console.log('[Debug] Iniciando prueba de alcance para MEMPHIS3.glb...');
+    fetch('./MEMPHIS3.glb', { method: 'HEAD' })
+      .then(response => {
+        if (response.ok) {
+          console.log('✅ [Debug] El archivo MEMPHIS3.glb es ALCANZABLE por el navegador (200 OK)');
+          console.log('   Tamaño detectado:', response.headers.get('content-length'), 'bytes');
+        } else {
+          console.error('❌ [Debug] El archivo MEMPHIS3.glb NO es alcanzable. Error:', response.status);
+        }
+      })
+      .catch(err => console.error('❌ [Debug] Error de red intentando alcanzar MEMPHIS3.glb:', err));
+
+    document.querySelector('a-scene').addEventListener('loaded', function () {
+      console.log('🚀 [Debug] La escena A-Frame ha cargado completamente.');
+    });
+
+    // Listener global para capturar errores de modelos en toda la escena
+    window.addEventListener('model-error', function (e) {
+      console.error('!!! ERROR GLOBAL DE MODELO:', e.detail.src, e.detail);
+    });
+
+    // cursor-listener: handles click, hover with glow, and CTA button clicks
+    AFRAME.registerComponent('cursor-listener', {
+      schema: { stationId: { type: 'int', default: 0 } },
+      init: function () {
+        const sid = this.data.stationId;
+        const el = this.el;
+
+        el.addEventListener('click', function () {
+          // If this is the CTA button, trigger portal
+          if (el.classList.contains('cta-button')) {
+            if (typeof triggerPortal === 'function') triggerPortal(sid);
+            return;
+          }
+          // Otherwise focus the station
+          if (typeof focusStation === 'function') focusStation(sid);
+        });
+
+        el.addEventListener('mouseenter', function () {
+          if (el.classList.contains('cta-button')) {
+            // Hover on CTA: brighten
+            el.setAttribute('material', 'emissiveIntensity', '0.7');
+            return;
+          }
+          if (typeof onStationHover === 'function') onStationHover(sid);
+        });
+
+        el.addEventListener('mouseleave', function () {
+          if (el.classList.contains('cta-button')) {
+            el.setAttribute('material', 'emissiveIntensity', '0.3');
+            return;
+          }
+          if (typeof onStationLeave === 'function') onStationLeave(sid);
+        });
+      }
+    });
+
+    // billboard: text always faces camera
+    AFRAME.registerComponent('billboard', {
+      tick: function () {
+        const cam = document.getElementById('main-camera');
+        if (!cam) return;
+        this.el.object3D.lookAt(cam.object3D.getWorldPosition(new THREE.Vector3()));
+      }
+    });
+
+    // auto-scale: fits GLB model and centers it visually
+    AFRAME.registerComponent('auto-scale', {
+      schema: { maxSize: { type: 'number', default: 2.2 } },
+      init: function () {
+        const el = this.el;
+
+        el.addEventListener('model-loaded', () => {
+          console.log('[AutoScale] Procesando y centrando:', el.id);
+          const obj = el.getObject3D('mesh');
+          if (!obj) return;
+
+          // 1. FORCE VISIBILITY
+          obj.traverse(child => {
+            if (child.isMesh) {
+              child.visible = true;
+              if (child.material) {
+                child.material.side = THREE.DoubleSide;
+                child.material.transparent = false;
+                child.material.opacity = 1.0;
+              }
+            }
+          });
+
+          // 2. CENTERING LOGIC (Local space correction)
+          const box = new THREE.Box3().setFromObject(obj);
+          const center = new THREE.Vector3();
+          box.getCenter(center);
+
+          const worldPos = new THREE.Vector3();
+          el.object3D.getWorldPosition(worldPos);
+
+          // Offset local para que el modelo se quede en la estación
+          obj.position.x = -(center.x - worldPos.x);
+          obj.position.y = -(box.min.y - worldPos.y);
+          obj.position.z = -(center.z - worldPos.z);
+
+          // 3. SCALE
+          const size = new THREE.Vector3();
+          box.getSize(size);
+          const maxDim = Math.max(size.x, size.y, size.z);
+          if (maxDim > 0) {
+            const sf = this.data.maxSize / maxDim;
+            el.setAttribute('scale', { x: sf, y: sf, z: sf });
+            el.dataset.initialScale = sf; // GUARDAR ESCALA BASE
+          }
+          console.log('[AutoScale] Ready: Modelo centrado en pedestal');
+        });
+      }
+    });
+  </script>
+
+  <script src="hub.js"></script>
+
+</body>
+
+</html>
