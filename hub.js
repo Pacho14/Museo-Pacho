@@ -37,6 +37,13 @@
         bindEvents();
         hideLoadingScreen();
         if (isMobile) initJoystick();
+
+        // Desactivar mirada por ratón en Desktop (petición de usuario: "suprimela")
+        const cam = document.getElementById("main-camera");
+        if (cam && !isMobile) {
+            cam.setAttribute("look-controls", "enabled: false");
+        }
+
         setTimeout(() => { hintBar.classList.add("hide"); hintHidden = true; }, 8000);
 
         // Mostrar guía premium al inicio tras fade-out de loading
