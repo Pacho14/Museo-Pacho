@@ -66,6 +66,21 @@
             animation: pulse-green 2s infinite;
         }
 
+        #https-warning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #ff4444;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            z-index: 5000;
+            display: none;
+            font-size: 0.8rem;
+            pointer-events: auto;
+        }
+
         @keyframes pulse-green {
             0% {
                 transform: translateX(-50%) scale(1);
@@ -163,6 +178,10 @@
 <body>
 
     <div id="shutter-flash"></div>
+
+    <div id="https-warning">
+        ⚠️ <b>HTTPS Requerido</b>: La cámara no funcionará sin conexión segura (GitHub Pages).
+    </div>
 
     <button id="ar-button-custom" onclick="requestPermissionsAndEnterAR()">VER EN MI ESPACIO (AR)</button>
 
@@ -285,24 +304,37 @@
 
         // --- Permissions & AR Entry ---
         const arBtn = document.getElementById('ar-button-custom');
+        const warn = document.getElementById('https-warning');
 
         window.addEventListener('load', () => {
+            // Verificar HTTPS
+            if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                warn.style.display = 'block';
+            }
+
+            // Mostrar botón si es móvil
             if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
                 arBtn.style.display = 'block';
+            } else {
+                statusMsg.textContent = "Modo Vista Previa (Escritorio). Pantalla Ar en móvil.";
             }
         });
 
         function requestPermissionsAndEnterAR() {
+            // Solicitar permisos de giroscopio (iOS 13+)
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
                     .then(response => {
                         if (response == 'granted') {
                             enterAR();
                         } else {
-                            alert('Permiso necesario para la experiencia AR.');
+                            alert('La experiencia AR requiere permisos de movimiento.');
                         }
                     })
-                    .catch(console.error);
+                    .catch(e => {
+                        console.error(e);
+                        enterAR(); // Intentar entrar de todos modos
+                    });
             } else {
                 enterAR();
             }
@@ -310,8 +342,11 @@
 
         function enterAR() {
             const scene = document.querySelector('a-scene');
-            scene.enterVR();
-            arBtn.style.display = 'none';
+            if (scene) {
+                scene.enterVR();
+                arBtn.style.display = 'none';
+                statusMsg.textContent = "Iniciando AR... Apunta al suelo.";
+            }
         }
 
         window.addEventListener('click', () => {
