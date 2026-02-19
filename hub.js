@@ -54,8 +54,8 @@
             const forward = data.vector.y;
             const side = data.vector.x;
             const force = data.force > 1 ? 1 : data.force;
-            moveZ = -forward * force * 0.15;
-            moveX = side * force * 0.15;
+            moveZ = -forward * force * 0.12;
+            moveX = side * force * 0.12;
         });
 
         manager.on('end', () => {
@@ -200,7 +200,7 @@
 
         // 2. Compute camera target position (offset from station)
         const rad = (station.angle * Math.PI) / 180;
-        const cameraDistance = 3.5;
+        const cameraDistance = 5.0; // Aumentado de 3.5 para mejor perspectiva curatorial
         const targetPos = {
             x: station.posX + Math.sin(rad) * cameraDistance,
             y: 2.2,
@@ -215,13 +215,13 @@
         rig.setAttribute("animation__pos", {
             property: "position",
             to: `${targetPos.x} ${targetPos.y} ${targetPos.z}`,
-            dur: 1400,
+            dur: 1800, // Más lento para mayor elegancia
             easing: "easeInOutCubic"
         });
         rig.setAttribute("animation__rot", {
             property: "rotation",
             to: `${lookRot.x} ${lookRot.y} ${lookRot.z}`,
-            dur: 1400,
+            dur: 1800,
             easing: "easeInOutCubic"
         });
 
@@ -232,22 +232,22 @@
         const sky = document.getElementById("sky");
         const spot = document.getElementById("spotlight");
 
-        ambient.setAttribute("animation__dim", { property: "light.intensity", to: 0.15, dur: 1000, easing: "easeInOutCubic" });
-        dir1.setAttribute("animation__dim", { property: "light.intensity", to: 0.2, dur: 1000, easing: "easeInOutCubic" });
-        dir2.setAttribute("animation__dim", { property: "light.intensity", to: 0.05, dur: 1000, easing: "easeInOutCubic" });
-        sky.setAttribute("animation__dim", { property: "material.color", to: "#1a1820", dur: 1200, easing: "easeInOutCubic" });
+        ambient.setAttribute("animation__dim", { property: "light.intensity", to: 0.15, dur: 1200, easing: "easeInOutCubic" });
+        dir1.setAttribute("animation__dim", { property: "light.intensity", to: 0.2, dur: 1200, easing: "easeInOutCubic" });
+        dir2.setAttribute("animation__dim", { property: "light.intensity", to: 0.05, dur: 1200, easing: "easeInOutCubic" });
+        sky.setAttribute("animation__dim", { property: "material.color", to: "#1a1820", dur: 1400, easing: "easeInOutCubic" });
 
         // Position and activate spotlight
         spot.setAttribute("position", `${station.posX} 6 ${station.posZ}`);
         spot.setAttribute("light", `type: spot; color: #fff; intensity: 2.5; angle: 35; penumbra: 0.6; decay: 1.5; target: #station-${station.id}`);
-        spot.setAttribute("animation__on", { property: "light.intensity", from: 0, to: 2.5, dur: 1000, easing: "easeInOutCubic" });
+        spot.setAttribute("animation__on", { property: "light.intensity", from: 0, to: 2.5, dur: 1200, easing: "easeInOutCubic" });
 
         // 5. After camera settles, spawn 3D text + button
         setTimeout(() => {
             spawn3DCuratorial(station);
             backBtn.classList.add("visible");
             isAnimating = false;
-        }, 1500);
+        }, 1900);
     };
 
     // ─── SPAWN 3D Curatorial Text ────────────────────────────────────
@@ -257,14 +257,14 @@
 
         // Position text to the right of the model
         const perpAngle = rad + Math.PI / 2;
-        const textDist = 2.2;
+        const textDist = 2.5; // Un poco más lejos para acomodar el nuevo ángulo
         const textX = station.posX + Math.sin(perpAngle) * textDist;
         const textZ = station.posZ - Math.cos(perpAngle) * textDist;
 
-        // Container entity for all curatorial elements
+        // Container entity for all curatorial elements (posicionado con billboard)
         const container = document.createElement("a-entity");
         container.id = "curatorial-3d";
-        container.setAttribute("position", `${textX} 1.6 ${textZ}`);
+        container.setAttribute("position", `${textX} 1.4 ${textZ}`);
         container.setAttribute("billboard", "");
 
         // Background panel (semi-transparent dark plane with M3 Surface color)

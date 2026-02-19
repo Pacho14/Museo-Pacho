@@ -278,9 +278,10 @@
 
     <!-- ── CAMERA ── -->
     <a-entity id="camera-rig" position="0 3.5 8" rotation="-12 0 0">
-      <a-camera id="main-camera" look-controls="pointerLockEnabled: false; reverseMouseDrag: false; touchEnabled: true"
-        wasd-controls="acceleration: 15; fly: false" cursor="rayOrigin: mouse; fuse: false"
-        raycaster="objects: .interactive; near: 0.1; far: 30">
+      <a-camera id="main-camera"
+        look-controls="pointerLockEnabled: true; reverseMouseDrag: false; touchEnabled: true; magicWindowTrackingEnabled: false; smoothingFactor: 0.1"
+        wasd-controls="acceleration: 20; fly: false; adEnabled: true; wsEnabled: true"
+        cursor="rayOrigin: mouse; fuse: false" raycaster="objects: .interactive; near: 0.1; far: 30">
       </a-camera>
     </a-entity>
 
@@ -409,13 +410,19 @@
           const center = new THREE.Vector3();
           box.getCenter(center);
 
-          const worldPos = new THREE.Vector3();
-          el.object3D.getWorldPosition(worldPos);
+          // Obtenemos la posición del centro del modelo en coordenadas locales
+          const localCenter = el.object3D.worldToLocal(center.clone());
 
-          // Offset local para que el modelo se quede en la estación
-          obj.position.x = -(center.x - worldPos.x);
-          obj.position.y = -(box.min.y - worldPos.y);
-          obj.position.z = -(center.z - worldPos.z);
+          // Calculamos la posición más baja (base) en coordenadas locales
+          const minPoint = new THREE.Vector3(center.x, box.min.y, center.z);
+          const localMin = el.object3D.worldToLocal(minPoint.clone());
+
+          // Ajustamos la posición del objeto interno (el mesh) para que:
+          // X, Z locales sean 0 (centrado horizontal)
+          // Y local sea tal que la base del modelo quede en Y=0 (apoyado en pedestal)
+          obj.position.x -= localCenter.x;
+          obj.position.z -= localCenter.z;
+          obj.position.y -= localMin.y;
 
           // 3. SCALE
           const size = new THREE.Vector3();
@@ -426,7 +433,7 @@
             el.setAttribute('scale', { x: sf, y: sf, z: sf });
             el.dataset.initialScale = sf; // GUARDAR ESCALA BASE
           }
-          console.log('[AutoScale] Ready: Modelo centrado en pedestal');
+          console.log('[AutoScale] Ready: Modelo centrado localmente en pedestal rotado');
         });
       }
     });
