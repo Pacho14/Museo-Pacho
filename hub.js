@@ -372,20 +372,13 @@
     };
 
     function launchActivity(station) {
-        console.log(`[HubWorld] Launching activity for: ${station.name} (${station.activity.type})`);
-        console.log(`[HubWorld] GLB: ${station.glb}`);
+        console.log(`[HubWorld] Launching AR Level for: ${station.name}`);
+        const modelUrl = station.glb || 'arduino 2.glb';
 
-        // Toast feedback
-        const toast = document.createElement("div");
-        toast.textContent = `Preparando: ${station.name}…`;
-        toast.style.cssText = `
-      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-      background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); color: white; border-radius: 50px;
-      padding: 12px 24px; font-family: Inter, sans-serif; font-size: 0.875rem;
-      z-index: 300; pointer-events: none; border: 1px solid rgba(255,255,255,0.1);
-    `;
-        document.body.appendChild(toast);
-        setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3000);
+        // Redirigir al nuevo nivel AR con el parámetro del modelo
+        setTimeout(() => {
+            window.location.href = `ar-level.html?model=${encodeURIComponent(modelUrl)}`;
+        }, 500);
     }
 
     // ─── RETURN TO HUB ──────────────────────────────────────────────

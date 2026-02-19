@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Balance Challenge AR — Museo de Pacho</title>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background: #000;
+        }
+
+        #ui-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px 20px;
+        }
+
+        .game-title {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #status-msg {
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .win-msg {
+            color: #FBBF24 !important;
+            border-color: #FBBF24 !important;
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+        }
+
+        #instruction {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .exit-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            pointer-events: auto;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="exit-btn" onclick="window.location.href='index.html'">✕</button>
+
+    <div id="ui-overlay">
+        <div class="game-title">Balance Challenge</div>
+        <div id="status-msg">Busca una superficie plana...</div>
+        <div id="instruction">Mueve tu móvil para estabilizar el objeto</div>
+    </div>
+
+    <a-scene webxr="optionalFeatures: hit-test; requiredFeatures: local-floor;"
+        renderer="colorManagement: true; antialias: true;" ar-hit-test="target: #balance-anchor; type: footprint;">
+        <a-assets>
+            <!-- Model loaded dynamically via JS -->
+        </a-assets>
+
+        <!-- Camera -->
+        <a-camera position="0 1.6 0" look-controls="enabled: false"></a-camera>
+
+        <!-- Game Anchor (Object spawn point) -->
+        <a-entity id="balance-anchor" visible="false">
+            <!-- The model will be appended here -->
+            <a-entity id="game-model" balance-game></a-entity>
+
+            <!-- Visual cue for placement -->
+            <a-ring rotation="-90 0 0" radius-inner="0.1" radius-outer="0.15" color="#818CF8" opacity="0.6"></a-ring>
+        </a-entity>
+
+        <a-light type="ambient" intensity="0.6"></a-light>
+        <a-light type="directional" position="1 2 1" intensity="0.8"></a-light>
+    </a-scene>
+
+    <script>
+        // --- Lógica de carga de modelo ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const modelFile = urlParams.get('model') || 'arduino 2.glb';
+        const gameModel = document.getElementById('game-model');
+
+        gameModel.setAttribute('gltf-model', `./${modelFile}`);
+        gameModel.setAttribute('scale', '0.5 0.5 0.5'); // Escala inicial AR
+
+        // --- Componente de Juego de Equilibrio ---
+        AFRAME.registerComponent('balance-game', {
+            init: function () {
+                this.swayAngle = 0;
+                this.userTilt = 0;
+                this.amplitude = 15; // Intensidad inicial del balanceo
+                this.stabilityTime = 0;
+                this.isWon = false;
+                this.statusMsg = document.getElementById('status-msg');
+
+                // Escuchar giroscopio
+                window.addEventListener('deviceorientation', (event) => {
+                    // Usamos gamma (inclinación lateral) para compensar
+                    this.userTilt = event.gamma || 0;
+                });
+
+                this.el.addEventListener('model-loaded', () => {
+                    this.statusMsg.textContent = "¡Objeto listo! Estabilízalo.";
+                });
+            },
+
+            tick: function (time, delta) {
+                if (this.isWon) return;
+
+                // 1. Balanceo procedural (Caos orgánico)
+                const naturalSway = Math.sin(time / 400) * this.amplitude;
+
+                // 2. Compensación del usuario
+                // Mapeamos el tilt del dispositivo (-30 a 30 grados aprox)
+                const compensation = this.userTilt * 0.8;
+
+                // 3. Rotación final
+                const finalZ = naturalSway + compensation;
+                this.el.object3D.rotation.z = THREE.MathUtils.degToRad(finalZ);
+
+                // 4. Verificación de estabilidad
+                const error = Math.abs(finalZ);
+                if (error < 5) { // Si el error es menor a 5 grados
+                    this.stabilityTime += delta;
+                    this.statusMsg.textContent = `Estabilizando... ${(this.stabilityTime / 1000).toFixed(1)}s`;
+                    this.statusMsg.style.borderColor = "#34D399";
+                } else {
+                    this.stabilityTime = 0;
+                    this.statusMsg.textContent = "¡Cuidado! Se inclina...";
+                    this.statusMsg.style.borderColor = "rgba(255,255,255,0.2)";
+                }
+
+                // 5. Victoria
+                if (this.stabilityTime > 3000) {
+                    this.victory();
+                }
+            },
+
+            victory: function () {
+                this.isWon = true;
+                this.statusMsg.textContent = "¡NIVEL COMPLETADO! 🏆";
+                this.statusMsg.classList.add("win-msg");
+
+                // Animación de recompensa
+                this.el.setAttribute('animation', {
+                    property: 'rotation',
+                    to: '0 360 0',
+                    dur: 1000,
+                    loop: 2,
+                    easing: 'easeInOutQuad'
+                });
+
+                // Partículas/Brillo (simulado con luz)
+                const light = document.createElement('a-light');
+                light.setAttribute('type', 'point');
+                light.setAttribute('intensity', '3');
+                light.setAttribute('color', '#FBBF24');
+                this.el.appendChild(light);
+            }
+        });
+
+        // --- Lógica de Hit Test (Detección de suelo) ---
+        const anchor = document.getElementById('balance-anchor');
+        document.querySelector('a-scene').addEventListener('enter-vr', () => {
+            if (document.querySelector('a-scene').is('ar-mode')) {
+                document.getElementById('status-msg').textContent = "Escaneando suelo...";
+            }
+        });
+
+        // Evento de click/tap en AR para fijar el objeto
+        window.addEventListener('click', () => {
+            if (anchor.getAttribute('visible')) {
+                // Ya visible, lo fijamos (podríamos desactivar el hit-test aquí si quisiéramos)
+                document.getElementById('status-msg').textContent = "¡Equilibra el objeto!";
+            }
+        });
+    </script>
+</body>
+
+</html>
