@@ -3,365 +3,219 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>AR Visualizador — Museo de Pacho</title>
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Visualizador Memphis 3D — Museo de Pacho</title>
+
+    <!-- Model Viewer de Google (Industry Standard for WebAR) -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
     <style>
-        body {
+        * {
             margin: 0;
-            overflow: hidden;
-            font-family: 'Inter', sans-serif;
-            background: #000;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        #ui-container {
-            position: fixed;
-            top: 0;
-            left: 0;
+        body {
+            background: #0a0a0a;
+            font-family: 'Inter', -apple-system, sans-serif;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+        }
+
+        model-viewer {
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            background: radial-gradient(circle, #222 0%, #050505 100%);
+            --progress-bar-color: #818CF8;
+        }
+
+        /* Botón de Salir */
+        .exit-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .exit-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Botón AR Principal */
+        .ar-button {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 16px 32px;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
             z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-            box-sizing: border-box;
-            transition: opacity 0.3s ease;
-        }
-
-        .header {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            pointer-events: auto;
+            gap: 10px;
+            white-space: nowrap;
         }
 
-        .footer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            pointer-events: auto;
+        .ar-button:active {
+            transform: translateX(-50%) scale(0.95);
         }
 
-        #ar-button-custom {
+        /* Overlay de Información */
+        .info-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 15px;
+            max-width: 250px;
+            pointer-events: none;
+            z-index: 90;
+        }
+
+        .info-panel h2 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #818CF8;
+            text-transform: uppercase;
+        }
+
+        .info-panel p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        /* Indicador de gestos */
+        .hand-hint {
             position: fixed;
             bottom: 120px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 18px 40px;
-            background: #22C55E;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
-            cursor: pointer;
-            pointer-events: auto;
-            z-index: 1000;
-            display: none;
-            animation: pulse-green 2s infinite;
-        }
-
-        #https-warning {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: #ff4444;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            z-index: 5000;
-            display: none;
-            font-size: 0.8rem;
-            pointer-events: auto;
-        }
-
-        @keyframes pulse-green {
-            0% {
-                transform: translateX(-50%) scale(1);
-                box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
-            }
-
-            50% {
-                transform: translateX(-50%) scale(1.05);
-                box-shadow: 0 15px 35px rgba(34, 197, 94, 0.6);
-            }
-
-            100% {
-                transform: translateX(-50%) scale(1);
-                box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
-            }
-        }
-
-        .btn-round {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-        }
-
-        .photo-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: white;
-            border: 5px solid rgba(0, 0, 0, 0.2);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .photo-btn:active {
-            transform: scale(0.9);
-        }
-
-        .photo-btn svg {
-            color: #333;
-        }
-
-        .tip-box {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 0.9rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            font-size: 0.75rem;
+            backdrop-filter: blur(5px);
+            opacity: 0.6;
+            z-index: 80;
         }
 
-        #shutter-flash {
+        /* Animación de carga */
+        #loader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: white;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 200;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.5s ease;
         }
 
-        @keyframes flash-anim {
-            0% {
-                opacity: 0;
-            }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #818CF8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
 
-            50% {
-                opacity: 1;
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
             }
 
             100% {
-                opacity: 0;
+                transform: rotate(360deg);
             }
-        }
-
-        .is-flashing {
-            animation: flash-anim 0.2s ease-out;
         }
     </style>
 </head>
 
 <body>
 
-    <div id="shutter-flash"></div>
-
-    <div id="https-warning">
-        ⚠️ <b>HTTPS Requerido</b>: La cámara no funcionará sin conexión segura (GitHub Pages).
+    <div id="loader">
+        <div class="spinner"></div>
     </div>
 
-    <button id="ar-button-custom" onclick="requestPermissionsAndEnterAR()">VER EN MI ESPACIO (AR)</button>
+    <button class="exit-btn" onclick="window.location.href='index.html'">✕</button>
 
-    <div id="ui-container">
-        <div class="header">
-            <button class="btn-round" onclick="window.location.href='index.html'">✕</button>
-            <div class="tip-box" id="status-msg">Escaneando superficie...</div>
-            <div style="width: 50px;"></div> <!-- Spacer -->
-        </div>
-
-        <div class="footer">
-            <div class="tip-box" id="gesture-tip">Desliza para rotar · Pellizca para zoom</div>
-            <button class="photo-btn" onclick="takePhoto()" title="Tomar Foto">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                    <circle cx="12" cy="13" r="4"></circle>
-                </svg>
-            </button>
-        </div>
+    <div class="info-panel">
+        <h2>Sala Naturaleza</h2>
+        <p>Modelo Memphis 3D. Usa el botón AR para ubicarlo en tu mundo real.</p>
     </div>
 
-    <a-scene webxr="optionalFeatures: hit-test; requiredFeatures: local-floor;"
-        renderer="colorManagement: true; antialias: true;" ar-hit-test="target: #viewer-anchor; type: footprint;"
-        device-orientation-permission-ui="enabled: true">
-        <a-sky id="desktop-bg" color="#111" radius="30"></a-sky>
+    <div class="hand-hint">↔️ Desliza para rotar · 🤏 Pellizca para zoom</div>
 
-        <a-camera position="0 1.6 3" look-controls="enabled: false"></a-camera>
-
-        <a-entity id="viewer-anchor" position="0 0 0">
-            <a-entity id="model-container" gesture-handler>
-                <a-entity id="main-model"></a-entity>
-            </a-entity>
-            <a-ring id="ar-ring" rotation="-90 0 0" radius-inner="0.1" radius-outer="0.15" color="#22C55E"
-                opacity="0.8"></a-ring>
-        </a-entity>
-
-        <a-light type="ambient" intensity="0.8"></a-light>
-        <a-light type="directional" position="1 4 2" intensity="1.5" color="#fff"></a-light>
-        <a-light type="point" position="-2 3 1" intensity="0.8" color="#A8F5C8"></a-light>
-    </a-scene>
+    <model-viewer id="mv-viewer" src="MEMPHIS3.glb" ar ar-modes="webxr scene-viewer quick-look" camera-controls
+        auto-rotate shadow-intensity="1" exposure="1" environment-image="neutral" ar-scale="auto" touch-action="pan-y">
+        <button slot="ar-button" class="ar-button">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M4 8l8-4 8 4M4 16l8 4 8-4M12 12l0 8M4 8v8M20 8v8M12 4v8"></path>
+            </svg>
+            UBICAR EN MI ESPACIO
+        </button>
+    </model-viewer>
 
     <script>
+        const modelViewer = document.querySelector('#mv-viewer');
+        const loader = document.getElementById('loader');
+
+        // Manejar el parámetro del modelo
         const urlParams = new URLSearchParams(window.location.search);
-        const modelFile = urlParams.get('model') || 'MEMPHIS3.glb';
-        const modelEl = document.getElementById('main-model');
-        const statusMsg = document.getElementById('status-msg');
-
-        modelEl.setAttribute('gltf-model', `./${modelFile}`);
-        modelEl.setAttribute('scale', '5 5 5'); // Escala base para viewer
-
-        modelEl.addEventListener('model-loaded', () => {
-            statusMsg.textContent = "Modelo listo. Ubícalo en AR.";
-
-            // Lógica de centrado
-            const obj = modelEl.getObject3D('mesh');
-            if (obj) {
-                const box = new THREE.Box3().setFromObject(obj);
-                const center = new THREE.Vector3();
-                box.getCenter(center);
-                const worldPos = new THREE.Vector3();
-                modelEl.object3D.getWorldPosition(worldPos);
-
-                obj.position.x = -(center.x - worldPos.x);
-                obj.position.y = -(box.min.y - worldPos.y);
-                obj.position.z = -(center.z - worldPos.z);
-            }
-        });
-
-        // Componente para rotación manual (Drag)
-        AFRAME.registerComponent('gesture-handler', {
-            init: function () {
-                this.internalRotation = { x: 0, y: 0 };
-                this.isDragging = false;
-                this.previousMouse = { x: 0, y: 0 };
-
-                const scene = this.el.sceneEl;
-
-                const onMove = (e) => {
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    if (this.isDragging) {
-                        const deltaX = clientX - this.previousMouse.x;
-                        this.el.object3D.rotation.y += deltaX * 0.01;
-                        this.previousMouse.x = clientX;
-                    }
-                };
-
-                const onStart = (e) => {
-                    this.isDragging = true;
-                    this.previousMouse.x = e.touches ? e.touches[0].clientX : e.clientX;
-                };
-
-                const onEnd = () => { this.isDragging = false; };
-
-                window.addEventListener('mousedown', onStart);
-                window.addEventListener('touchstart', onStart);
-                window.addEventListener('mousemove', onMove);
-                window.addEventListener('touchmove', onMove);
-                window.addEventListener('mouseup', onEnd);
-                window.addEventListener('touchend', onEnd);
-            }
-        });
-
-        function takePhoto() {
-            // Ocultar UI
-            const ui = document.getElementById('ui-container');
-            const flash = document.getElementById('shutter-flash');
-
-            ui.style.opacity = '0';
-            flash.classList.add('is-flashing');
-
-            setTimeout(() => {
-                flash.classList.remove('is-flashing');
-                // Mantener oculto un momento para que el usuario tome su captura nativa
-                setTimeout(() => {
-                    ui.style.opacity = '1';
-                }, 2000);
-            }, 200);
+        const modelFile = urlParams.get('model');
+        if (modelFile) {
+            modelViewer.src = modelFile;
+            console.log('[Viewer] Cargando:', modelFile);
         }
 
-        // --- Permissions & AR Entry ---
-        const arBtn = document.getElementById('ar-button-custom');
-        const warn = document.getElementById('https-warning');
-
-        window.addEventListener('load', () => {
-            // Verificar HTTPS
-            if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-                warn.style.display = 'block';
-            }
-
-            // Mostrar botón si es móvil
-            if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-                arBtn.style.display = 'block';
-            } else {
-                statusMsg.textContent = "Modo Vista Previa (Escritorio). Pantalla Ar en móvil.";
-            }
+        modelViewer.addEventListener('load', () => {
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 500);
+            console.log('[Viewer] Modelo cargado');
         });
 
-        function requestPermissionsAndEnterAR() {
-            // Solicitar permisos de giroscopio (iOS 13+)
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(response => {
-                        if (response == 'granted') {
-                            enterAR();
-                        } else {
-                            alert('La experiencia AR requiere permisos de movimiento.');
-                        }
-                    })
-                    .catch(e => {
-                        console.error(e);
-                        enterAR(); // Intentar entrar de todos modos
-                    });
-            } else {
-                enterAR();
-            }
-        }
-
-        function enterAR() {
-            const scene = document.querySelector('a-scene');
-            if (scene) {
-                scene.enterVR();
-                arBtn.style.display = 'none';
-                statusMsg.textContent = "Iniciando AR... Apunta al suelo.";
-            }
-        }
-
-        window.addEventListener('click', () => {
-            const scene = document.querySelector('a-scene');
-            if (scene.is('ar-mode')) {
-                document.getElementById('ar-ring').setAttribute('visible', false);
-                statusMsg.textContent = "Objeto fijado.";
-            }
+        modelViewer.addEventListener('error', (e) => {
+            console.error('[Viewer] Error:', e);
+            alert('Error cargando el modelo 3D.');
         });
 
-        document.querySelector('a-scene').addEventListener('enter-vr', () => {
-            if (document.querySelector('a-scene').is('ar-mode')) {
-                document.getElementById('desktop-bg').setAttribute('visible', false);
-            }
-        });
+        // Prevenir scroll accidental
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
     </script>
 </body>
 
