@@ -372,12 +372,23 @@
     };
 
     function launchActivity(station) {
-        console.log(`[HubWorld] Launching AR Level for: ${station.name}`);
-        const modelUrl = station.glb || 'arduino 2.glb';
+        console.log(`[HubWorld] Launching AR for station ${station.id}: ${station.name}`);
+        const modelFile = station.glb || 'arduino 2.glb';
 
-        // Redirigir al nuevo nivel AR con el parámetro del modelo
+        // Determinar destino según la estación
+        // Estación 2: Juego de Equilibrio
+        // Estación 4: Photo Mode / Viewer
+        let targetPage = 'ar-viewer.html'; // Default por ahora
+
+        if (station.id === 2) {
+            targetPage = 'ar-level.html';
+        } else if (station.id === 4) {
+            targetPage = 'ar-viewer.html';
+        }
+
+        // Redirigir con delay para feedback visual
         setTimeout(() => {
-            window.location.href = `ar-level.html?model=${encodeURIComponent(modelUrl)}`;
+            window.location.href = `${targetPage}?model=${encodeURIComponent(modelFile)}`;
         }, 500);
     }
 
