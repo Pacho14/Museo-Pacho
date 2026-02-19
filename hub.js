@@ -213,14 +213,22 @@
         container.setAttribute("position", `${textX} 1.6 ${textZ}`);
         container.setAttribute("billboard", "");
 
-        // Background panel (semi-transparent dark plane)
+        // Background panel (semi-transparent dark plane with M3 Surface color)
         const panel = document.createElement("a-plane");
         panel.setAttribute("width", "3.2");
         panel.setAttribute("height", "2.8");
-        panel.setAttribute("color", "#0a0a0a");
-        panel.setAttribute("material", "opacity: 0.75; transparent: true; side: double");
+        panel.setAttribute("color", "#1C1B1F");
+        panel.setAttribute("material", "opacity: 0.85; transparent: true; side: double; roughness: 1; metalness: 0");
         panel.setAttribute("position", "0 0 -0.02");
         container.appendChild(panel);
+
+        // Sub-panel for glass effect (extra layer)
+        const glassLayer = document.createElement("a-plane");
+        glassLayer.setAttribute("width", "3.1");
+        glassLayer.setAttribute("height", "2.7");
+        glassLayer.setAttribute("material", "color: #313033; opacity: 0.1; transparent: true; side: double; emissive: #D0BCFF; emissiveIntensity: 0.05");
+        glassLayer.setAttribute("position", "0 0 -0.01");
+        container.appendChild(glassLayer);
 
         // Station number badge
         const badge = document.createElement("a-text");
@@ -229,7 +237,8 @@
         badge.setAttribute("color", station.accentColor);
         badge.setAttribute("width", "2.5");
         badge.setAttribute("position", "-1.3 1.05 0");
-        badge.setAttribute("font", "roboto");
+        badge.setAttribute("font", "https://cdn.aframe.io/fonts/Roboto-msdf.json");
+        badge.setAttribute("letter-spacing", "12");
         badge.setAttribute("letter-spacing", "6");
         container.appendChild(badge);
 
@@ -237,20 +246,21 @@
         const title = document.createElement("a-text");
         title.setAttribute("value", station.name);
         title.setAttribute("align", "left");
-        title.setAttribute("color", "#FFFFFF");
-        title.setAttribute("width", "4.5");
-        title.setAttribute("position", "-1.3 0.7 0");
-        title.setAttribute("font", "roboto");
+        title.setAttribute("color", "#E6E1E5");
+        title.setAttribute("width", "4.8");
+        title.setAttribute("position", "-1.3 0.8 0");
+        title.setAttribute("font", "https://cdn.aframe.io/fonts/Roboto-msdf.json");
+        title.setAttribute("letter-spacing", "2");
         container.appendChild(title);
 
         // Subtitle
         const subtitle = document.createElement("a-text");
         subtitle.setAttribute("value", station.subtitle);
         subtitle.setAttribute("align", "left");
-        subtitle.setAttribute("color", station.glowColor);
+        subtitle.setAttribute("color", "#D0BCFF");
         subtitle.setAttribute("width", "2.8");
-        subtitle.setAttribute("position", "-1.3 0.4 0");
-        subtitle.setAttribute("font", "roboto");
+        subtitle.setAttribute("position", "-1.3 0.5 0");
+        subtitle.setAttribute("font", "https://cdn.aframe.io/fonts/Roboto-msdf.json");
         container.appendChild(subtitle);
 
         // Divider
@@ -266,10 +276,10 @@
         const desc = document.createElement("a-text");
         desc.setAttribute("value", station.description);
         desc.setAttribute("align", "left");
-        desc.setAttribute("color", "#B0ADA8");
+        desc.setAttribute("color", "#CAC4D0");
         desc.setAttribute("width", "2.8");
         desc.setAttribute("position", "-1.3 -0.05 0");
-        desc.setAttribute("font", "roboto");
+        desc.setAttribute("font", "https://cdn.aframe.io/fonts/Roboto-msdf.json");
         desc.setAttribute("line-height", "60");
         container.appendChild(desc);
 
@@ -278,12 +288,12 @@
         btnGroup.setAttribute("position", "0 -0.8 0");
         btnGroup.id = "cta-3d";
 
-        // Button background
+        // Button background (M3 Tonal Container style)
         const btnBg = document.createElement("a-plane");
         btnBg.setAttribute("width", "2.8");
-        btnBg.setAttribute("height", "0.5");
-        btnBg.setAttribute("color", station.accentColor);
-        btnBg.setAttribute("material", `emissive: ${station.accentColor}; emissiveIntensity: 0.3; opacity: 0.95; transparent: true; side: double`);
+        btnBg.setAttribute("height", "0.6");
+        btnBg.setAttribute("color", "#D0BCFF");
+        btnBg.setAttribute("material", "emissive: #D0BCFF; emissiveIntensity: 0.1; opacity: 0.95; transparent: true; side: double");
         btnBg.setAttribute("class", "interactive cta-button");
         btnBg.setAttribute("cursor-listener", `stationId: ${station.id}`);
         btnBg.id = "cta-bg";
@@ -291,12 +301,13 @@
 
         // Button text
         const btnText = document.createElement("a-text");
-        btnText.setAttribute("value", "✦  Explorar en Inmersión 3D");
+        btnText.setAttribute("value", "EXPLORAR");
         btnText.setAttribute("align", "center");
-        btnText.setAttribute("color", "#FFFFFF");
-        btnText.setAttribute("width", "2.8");
+        btnText.setAttribute("color", "#381E72");
+        btnText.setAttribute("width", "3.2");
         btnText.setAttribute("position", "0 0 0.01");
-        btnText.setAttribute("font", "roboto");
+        btnText.setAttribute("font", "https://cdn.aframe.io/fonts/Roboto-msdf.json");
+        btnText.setAttribute("letter-spacing", "20");
         btnGroup.appendChild(btnText);
 
         // Glow behind button

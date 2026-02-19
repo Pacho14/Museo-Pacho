@@ -17,11 +17,19 @@
 
         body {
             background: #030305;
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Inter', sans-serif;
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            color: white;
+            color: var(--md-sys-color-on-surface);
+        }
+
+        :root {
+            --md-sys-color-primary: #D0BCFF;
+            --md-sys-color-on-primary: #381E72;
+            --md-sys-color-surface: #1C1B1F;
+            --md-sys-color-on-surface: #E6E1E5;
+            --md-sys-color-on-surface-variant: #CAC4D0;
         }
 
         .container {
@@ -57,86 +65,89 @@
         /* Botón de Salir - Premium Glass */
         .exit-btn {
             position: fixed;
-            top: 24px;
-            left: 24px;
+            top: 32px;
+            left: 32px;
             width: 48px;
             height: 48px;
-            background: rgba(15, 23, 42, 0.45);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(28, 27, 31, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            color: var(--md-sys-color-on-surface);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.6s cubic-bezier(0.05, 0.7, 0.1, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
 
         .exit-btn:hover {
-            background: rgba(99, 102, 241, 0.2);
-            border-color: #6366F1;
-            transform: rotate(90deg) scale(1.1);
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            transform: scale(1.1) rotate(90deg);
         }
 
-        /* Pantalla de inicio - Ultra Premium */
+        /* Pantalla de inicio - Material Luxe Cover */
         #start-screen {
             position: fixed;
             inset: 0;
-            background: radial-gradient(circle at center, rgba(10, 10, 15, 0.8) 0%, #030305 100%);
+            background: radial-gradient(circle at center, rgba(28, 27, 31, 0.6) 0%, #030305 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 2000;
             text-align: center;
-            padding: 24px;
-            backdrop-filter: blur(8px);
+            padding: 40px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
         }
 
         #start-screen h1 {
             font-family: 'Outfit', sans-serif;
-            margin-bottom: 12px;
-            font-size: 2.2rem;
+            font-size: clamp(3rem, 10vw, 5rem);
             font-weight: 800;
-            background: linear-gradient(135deg, #fff 0%, #818CF8 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--md-sys-color-on-surface);
             letter-spacing: -0.02em;
+            line-height: 0.9;
+            margin-bottom: 24px;
+            text-transform: uppercase;
         }
 
         #start-screen p {
-            font-size: 1rem;
-            color: #94A3B8;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: var(--md-sys-color-primary);
             max-width: 400px;
-            line-height: 1.6;
-            margin-bottom: 40px;
+            margin-bottom: 48px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 600;
         }
 
         #start-btn {
-            background: #6366F1;
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
             border: none;
-            border-radius: 50px;
-            color: white;
-            padding: 18px 42px;
+            padding: 20px 56px;
+            border-radius: 100px;
             font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
             cursor: pointer;
-            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.6);
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.6s cubic-bezier(0.05, 0.7, 0.1, 1);
+            box-shadow: 0 12px 32px rgba(208, 188, 255, 0.2);
         }
 
         #start-btn:hover {
-            transform: translateY(-4px);
-            background: #818CF8;
-            box-shadow: 0 15px 50px -10px rgba(99, 102, 241, 0.8);
+            transform: scale(1.05) translateY(-4px);
+            box-shadow: 0 20px 48px rgba(208, 188, 255, 0.4);
+            letter-spacing: 0.25em;
         }
 
         #loading {
