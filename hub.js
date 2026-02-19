@@ -10,6 +10,14 @@
     let activeStation = null;
     let isAnimating = false;
     let hintHidden = false;
+    let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        document.body.classList.add("is-mobile");
+        // Hide fixed a-cursor component for direct touch
+        const cursorEl = document.getElementById("fixed-cursor");
+        if (cursorEl) cursorEl.setAttribute("visible", false);
+    }
 
     // Posición de cámara inicial
     const HOME_POS = { x: 0, y: 3.5, z: 8 };
@@ -28,7 +36,56 @@
         buildStationNav();
         bindEvents();
         hideLoadingScreen();
+        if (isMobile) initJoystick();
         setTimeout(() => { hintBar.classList.add("hide"); hintHidden = true; }, 8000);
+    }
+
+    function initJoystick() {
+        const manager = nipplejs.create({
+            zone: document.getElementById('joystick-container'),
+            mode: 'static',
+            position: { left: '60px', bottom: '60px' },
+            color: '#818CF8',
+            size: 100
+        });
+
+        const rig = document.getElementById('camera-rig');
+        let moveX = 0;
+        let moveZ = 0;
+
+        manager.on('move', (evt, data) => {
+            const forward = data.vector.y;
+            const side = data.vector.x;
+            const force = data.force > 1 ? 1 : data.force;
+            moveZ = -forward * force * 0.15;
+            moveX = side * force * 0.15;
+        });
+
+        manager.on('end', () => {
+            moveX = 0;
+            moveZ = 0;
+        });
+
+        // Loop de movimiento manual para el joystick
+        function updateJoystickMove() {
+            if (activeStation || isAnimating) {
+                requestAnimationFrame(updateJoystickMove);
+                return;
+            }
+            if (moveX !== 0 || moveZ !== 0) {
+                const rotation = rig.getAttribute('rotation');
+                const angle = rotation.y * (Math.PI / 180);
+
+                // Movimiento relativo a la orientación de la cámara
+                const currPos = rig.getAttribute('position');
+                currPos.x += moveX * Math.cos(angle) + moveZ * Math.sin(angle);
+                currPos.z += moveX * Math.sin(-angle) + moveZ * Math.cos(angle);
+
+                rig.setAttribute('position', currPos);
+            }
+            requestAnimationFrame(updateJoystickMove);
+        }
+        updateJoystickMove();
     }
 
     function buildStationNav() {

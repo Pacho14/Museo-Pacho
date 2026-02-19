@@ -278,10 +278,10 @@
 
     <!-- ── CAMERA ── -->
     <a-entity id="camera-rig" position="0 3.5 8" rotation="-12 0 0">
-      <a-camera id="main-camera" look-controls="pointerLockEnabled: false; reverseMouseDrag: false"
+      <a-camera id="main-camera" look-controls="pointerLockEnabled: false; reverseMouseDrag: false; touchEnabled: true"
         wasd-controls="acceleration: 15; fly: false" cursor="rayOrigin: mouse; fuse: false"
         raycaster="objects: .interactive; near: 0.1; far: 30">
-        <a-cursor color="#818CF8" fuse="false" radius-inner="0.008" radius-outer="0.014"
+        <a-cursor id="fixed-cursor" color="#818CF8" fuse="false" radius-inner="0.008" radius-outer="0.014"
           material="color: #818CF8; shader: flat; opacity: 0.8"></a-cursor>
       </a-camera>
     </a-entity>
@@ -435,6 +435,11 @@
     });
   </script>
 
+  <!-- ── Mobile Specific Controls ── -->
+  <div id="joystick-container"></div>
+
+  <!-- External Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.1/nipplejs.min.js"></script>
   <script src="hub.js"></script>
 
 </body>
