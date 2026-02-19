@@ -7,6 +7,8 @@
     <title>Probador Virtual de Anillo — Museo de Pacho</title>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;600;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -14,8 +16,8 @@
         }
 
         body {
-            background: #0a0a0a;
-            font-family: 'Inter', -apple-system, sans-serif;
+            background: #030305;
+            font-family: 'Inter', system-ui, sans-serif;
             width: 100vw;
             height: 100vh;
             overflow: hidden;
@@ -52,68 +54,89 @@
             z-index: 2;
         }
 
-        /* Botón de Salir */
+        /* Botón de Salir - Premium Glass */
         .exit-btn {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 44px;
-            height: 44px;
-            background: rgba(0, 0, 0, 0.6);
+            top: 24px;
+            left: 24px;
+            width: 48px;
+            height: 48px;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(10px);
             z-index: 1000;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .exit-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(99, 102, 241, 0.2);
+            border-color: #6366F1;
+            transform: rotate(90deg) scale(1.1);
         }
 
-        /* Pantalla de inicio */
+        /* Pantalla de inicio - Ultra Premium */
         #start-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 15, 0.9);
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(10, 10, 15, 0.8) 0%, #030305 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 2000;
             text-align: center;
-            padding: 20px;
+            padding: 24px;
+            backdrop-filter: blur(8px);
         }
 
         #start-screen h1 {
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            color: #818CF8;
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 12px;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #818CF8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        #start-screen p {
+            font-size: 1rem;
+            color: #94A3B8;
+            max-width: 400px;
+            line-height: 1.6;
+            margin-bottom: 40px;
         }
 
         #start-btn {
-            background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
+            background: #6366F1;
             border: none;
             border-radius: 50px;
             color: white;
-            padding: 16px 32px;
+            padding: 18px 42px;
+            font-family: 'Outfit', sans-serif;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
-            transition: transform 0.2s;
+            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.6);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        #start-btn:active {
-            transform: scale(0.95);
+        #start-btn:hover {
+            transform: translateY(-4px);
+            background: #818CF8;
+            box-shadow: 0 15px 50px -10px rgba(99, 102, 241, 0.8);
         }
 
         #loading {
@@ -121,26 +144,37 @@
             bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: #E2E8F0;
             z-index: 1500;
         }
 
         .hint-text {
             position: fixed;
-            bottom: 100px;
+            bottom: 110px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
             z-index: 100;
             pointer-events: none;
         }
+    </style>
     </style>
 
     <!-- MediaPipe Scripts -->
