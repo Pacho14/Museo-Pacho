@@ -87,6 +87,45 @@
         .exit-btn:hover {
             background: rgba(255, 255, 255, 0.2);
         }
+
+        #retry-btn {
+            display: none;
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 18px 40px;
+            background: #FBBF24;
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 100;
+            animation: pulse-gold 2s infinite;
+        }
+
+        @keyframes pulse-gold {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4);
+            }
+
+            50% {
+                transform: translateX(-50%) scale(1.05);
+                box-shadow: 0 15px 35px rgba(251, 191, 36, 0.6);
+            }
+
+            100% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4);
+            }
+        }
     </style>
 </head>
 
@@ -99,6 +138,7 @@
         <div id="status-msg">Cargando experiencia...</div>
         <div id="instruction">En móvil: inclina el dispositivo lateralmente.<br>En PC: mueve el mouse de izquierda a
             derecha.</div>
+        <button id="retry-btn" onclick="retryGame()">Reintentar Nivel</button>
     </div>
 
     <a-scene webxr="optionalFeatures: hit-test; requiredFeatures: local-floor;"
@@ -145,6 +185,22 @@
         gameModel.addEventListener('model-loaded', () => {
             console.log('[Game] Modelo cargado con éxito');
             statusMsg.textContent = "¡Modelo Cargado! Busca una superficie AR o usa tu mouse.";
+
+            // --- Lógica de Centrado ---
+            const obj = gameModel.getObject3D('mesh');
+            if (obj) {
+                const box = new THREE.Box3().setFromObject(obj);
+                const center = new THREE.Vector3();
+                box.getCenter(center);
+                const worldPos = new THREE.Vector3();
+                gameModel.object3D.getWorldPosition(worldPos);
+
+                // Offset para centrar la base en el ancla
+                obj.position.x = -(center.x - worldPos.x);
+                obj.position.y = -(box.min.y - worldPos.y);
+                obj.position.z = -(center.z - worldPos.z);
+                console.log('[Game] Modelo centrado en el ancla');
+            }
         });
 
         gameModel.addEventListener('model-error', (e) => {
@@ -174,7 +230,6 @@
                 // 2. Mouse Fallback (Desktop)
                 window.addEventListener('mousemove', (e) => {
                     if (!this.isAR) {
-                        // Mapeamos el centro de la pantalla como 0, y los bordes como -45 a 45 grados
                         let x = (e.clientX / window.innerWidth) - 0.5;
                         this.userCompensation = x * 90;
                     }
@@ -193,16 +248,8 @@
             tick: function (time, delta) {
                 if (this.isWon) return;
 
-                // 1. Balanceo procedural (Caos rítmico)
-                // Usamos una frecuencia ligeramente variable para que no sea predecible
                 const naturalSway = Math.sin(time / 450) * this.amplitude;
-
-                // 2. Compensación (Inclinación física o mouse)
-                // Invertimos la relación: si el objeto se inclina a la derecha, 
-                // el usuario debe inclinar el dispositivo a la izquierda.
                 const finalZ = naturalSway + (this.userCompensation * 0.85);
-
-                // Aplicar rotación suave
                 this.el.object3D.rotation.z = THREE.MathUtils.degToRad(finalZ);
 
                 // 3. Verificación de estabilidad (Umbral de 18 grados - muy fácil)
@@ -220,7 +267,6 @@
                     this.statusMsg.style.borderColor = "#ff4444";
                 }
 
-                // 4. Victoria
                 if (this.stabilityTime > 3000) {
                     this.victory();
                 }
@@ -233,7 +279,9 @@
                 this.statusMsg.style.color = "#000";
                 this.statusMsg.classList.add("win-msg");
 
-                // Animación de recompensa
+                // Mostrar botón de reintentar
+                document.getElementById('retry-btn').style.display = 'block';
+
                 this.el.setAttribute('animation', {
                     property: 'rotation',
                     to: '0 360 0',
@@ -242,23 +290,22 @@
                     easing: 'easeInOutQuad'
                 });
 
-                // Partículas/Brillo
                 const light = document.createElement('a-light');
                 light.setAttribute('type', 'point');
                 light.setAttribute('intensity', '4');
                 light.setAttribute('color', '#FBBF24');
                 light.setAttribute('position', '0 1 0');
                 this.el.appendChild(light);
-
-                console.log('[Game] Victoria alcanzada');
             }
         });
 
-        // Tap to fix model position in AR
+        function retryGame() {
+            window.location.reload();
+        }
+
         window.addEventListener('click', () => {
             const scene = document.querySelector('a-scene');
             if (scene.is('ar-mode')) {
-                const anchor = document.getElementById('balance-anchor');
                 document.getElementById('ar-ring').setAttribute('visible', false);
                 statusMsg.textContent = "¡Posición fijada! ¡Equilíbralo!";
             }
