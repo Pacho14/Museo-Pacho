@@ -16,13 +16,12 @@
         document.body.classList.add("is-mobile");
     }
 
-    // Posición de cámara inicial
-    const HOME_POS = { x: 0, y: 3.5, z: 8 };
-    const HOME_ROT = { x: -12, y: 0, z: 0 };
+    // Posición de cámara inicial (Vista Frontal Elevada)
+    const HOME_POS = { x: 0, y: 7.5, z: 13.5 };
+    const HOME_ROT = { x: -25, y: 0, z: 0 };
 
     // ─── Refs DOM ────────────────────────────────────────────────────
     const stationLabel = document.getElementById("station-label");
-    const hintBar = document.getElementById("hint-bar");
     const stationNav = document.getElementById("station-nav");
     const loadingScreen = document.getElementById("loading-screen");
     const backBtn = document.getElementById("back-to-hub");
@@ -39,12 +38,16 @@
         if (isMobile) initJoystick();
 
         // Desactivar mirada por ratón en Desktop (petición de usuario: "suprimela")
+        // Pero mantener el componente activo para no romper el cursor/raycaster
         const cam = document.getElementById("main-camera");
         if (cam && !isMobile) {
-            cam.setAttribute("look-controls", "enabled: false");
+            cam.setAttribute("look-controls", {
+                enabled: true,
+                mouseEnabled: false,
+                touchEnabled: true
+            });
         }
 
-        setTimeout(() => { hintBar.classList.add("hide"); hintHidden = true; }, 8000);
 
         // Mostrar guía premium al inicio tras fade-out de loading
         setTimeout(() => {
@@ -213,7 +216,6 @@
         document.body.classList.add("cinematic");
 
         // Hide hint
-        if (!hintHidden) { hintBar.classList.add("hide"); hintHidden = true; }
         stationLabel.classList.remove("visible");
 
         // Update dots
@@ -536,8 +538,18 @@
         // Re-enable controls after animation
         setTimeout(() => {
             const camera = document.getElementById("main-camera");
-            camera.setAttribute("look-controls", "enabled", true);
             camera.setAttribute("wasd-controls", "enabled", true);
+
+            if (isMobile) {
+                camera.setAttribute("look-controls", "enabled", true);
+            } else {
+                // En Desktop mantenemos enabled:true pero mouseEnabled:false
+                camera.setAttribute("look-controls", {
+                    enabled: true,
+                    mouseEnabled: false,
+                    touchEnabled: true
+                });
+            }
 
             document.body.classList.remove("cinematic");
             document.querySelectorAll(".station-dot").forEach(d => d.classList.remove("active"));

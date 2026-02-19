@@ -185,33 +185,6 @@ a-scene {
   transform: translate(-50%, calc(-50% - 120px)) scale(1);
 }
 
-/* ── Hint bar ── */
-#hint-bar {
-  position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--glass-surface-1);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: var(--glass-border);
-  border-radius: var(--radius-full);
-  padding: 10px 24px;
-  font-family: var(--font-main);
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: var(--md-sys-color-on-surface-variant);
-  letter-spacing: 0.08em;
-  pointer-events: none;
-  box-shadow: var(--shadow-premium);
-  white-space: nowrap;
-  opacity: 1;
-  transition: opacity 1s ease;
-}
-
-#hint-bar.hide {
-  opacity: 0;
-}
 
 /* ── Station nav dots ── */
 #station-nav {
@@ -400,9 +373,6 @@ body.cinematic #station-nav {
   opacity: 0.3;
 }
 
-body.cinematic #hint-bar {
-  opacity: 0;
-}
 
 /* ── Responsive ── */
 @media (max-width: 600px) {

@@ -277,9 +277,9 @@
     </a-entity>
 
     <!-- ── CAMERA ── -->
-    <a-entity id="camera-rig" position="0 3.5 8" rotation="-12 0 0">
+    <a-entity id="camera-rig" position="0 7.5 13.5" rotation="-25 0 0">
       <a-camera id="main-camera"
-        look-controls="pointerLockEnabled: true; reverseMouseDrag: false; touchEnabled: true; magicWindowTrackingEnabled: false; smoothingFactor: 0.1"
+        look-controls="pointerLockEnabled: false; reverseMouseDrag: false; touchEnabled: true; magicWindowTrackingEnabled: false; smoothingFactor: 0.1"
         wasd-controls="acceleration: 20; fly: false; adEnabled: true; wsEnabled: true"
         cursor="rayOrigin: mouse; fuse: false" raycaster="objects: .interactive; near: 0.1; far: 30">
       </a-camera>
@@ -295,7 +295,6 @@
       <span class="hub-name">Hub World</span>
     </div>
     <div id="station-label"></div>
-    <div id="hint-bar">Mueve el mouse para explorar · Haz clic en un modelo para interactuar</div>
     <div id="station-nav"></div>
 
     <!-- ── Controls Guide (Contextual) ── -->
