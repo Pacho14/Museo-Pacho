@@ -42,7 +42,7 @@
 
     <!-- ── GROUND ── -->
     <!-- Central hex platform -->
-    <a-cylinder id="platform-center" position="0 -0.05 0" radius="3.5" height="0.2" segments-radial="6" color="#2A2736"
+    <a-cylinder id="platform-center" position="0 -0.05 0" radius="3.5" height="0.2" segments-radial="6" color="#2A2540"
       material="roughness: 0.9; metalness: 0.1; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.3">
     </a-cylinder>
 
@@ -93,150 +93,110 @@
     <!-- ══════════════════════════════════════════════════════════════ -->
     <!-- ── STATION 1 ─ 0° ─ Sala Memphiana ──────────────────────── -->
     <!-- ══════════════════════════════════════════════════════════════ -->
-    <a-entity id="station-1" position="0 0 -8">
-      <!-- Walkway -->
-      <a-box position="0 -0.07 4" width="1.4" height="0.1" depth="8" color="#252233"
-        material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2">
-      </a-box>
-      <!-- Walkway glow strips -->
-      <a-box position="-0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#6366F1"
-        material="emissive: #6366F1; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
-      <a-box position="0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#6366F1"
-        material="emissive: #6366F1; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+    <a-entity id="station-1-wrapper" rotation="0 0 0">
+      <a-entity id="station-1" position="0 0 -8">
+        <!-- Walkway -->
+        <a-box position="0 -0.07 4" width="1.4" height="0.1" depth="8" color="#252233"
+          material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2">
+        </a-box>
+        <!-- Walkway glow strips -->
+        <a-box position="-0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#6366F1"
+          material="emissive: #6366F1; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+        <a-box position="0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#6366F1"
+          material="emissive: #6366F1; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
 
-      <!-- Platform -->
-      <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2A2540"
-        material="roughness: 0.85; flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2">
-      </a-cylinder>
-      <!-- Pedestal -->
-      <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#352F50"
-        material="roughness: 0.85; flatShading: true; emissive: #2a2445; emissiveIntensity: 0.3">
-      </a-cylinder>
+        <!-- Platform -->
+        <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2A2540"
+          material="roughness: 0.85; flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2">
+        </a-cylinder>
+        <!-- Pedestal -->
+        <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#352F50"
+          material="roughness: 0.85; flatShading: true; emissive: #2a2445; emissiveIntensity: 0.3">
+        </a-cylinder>
 
-      <!-- Estación 1: Tetraedro (placeholder) -->
-      <a-tetrahedron id="glb-1" position="0 1.1 0" radius="0.6" color="#818CF8" class="interactive"
-        cursor-listener="stationId: 1" data-initial-scale="1"
-        material="roughness: 0.65; flatShading: true; emissive: #6366F1; emissiveIntensity: 0.15"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 24000; easing: linear"></a-tetrahedron>
+        <!-- Estación 1: Tetraedro (placeholder) -->
+        <a-tetrahedron id="glb-1" position="0 1.1 0" radius="0.6" color="#818CF8" class="interactive"
+          cursor-listener="stationId: 1" data-initial-scale="1"
+          material="roughness: 0.65; flatShading: true; emissive: #6366F1; emissiveIntensity: 0.15"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 24000; easing: linear"></a-tetrahedron>
 
-      <!-- Station label 3D -->
-      <a-text value="Sala Memphiana" align="center" color="#D0BCFF" width="4" position="0 3.0 0"
-        font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
+        <a-text value="Sala Memphiana" align="center" color="#D0BCFF" width="4" position="0 3.0 0"
+          font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
+      </a-entity>
     </a-entity>
 
     <!-- ══════════════════════════════════════════════════════════════ -->
     <!-- ── STATION 2 ─ 72° ─ Sala Histórica ─────────────────────── -->
     <!-- ══════════════════════════════════════════════════════════════ -->
-    <a-entity id="station-2" position="7.61 0 -2.47">
-      <a-box position="-3.8 -0.07 1.23" rotation="0 -18 0" width="1.4" height="0.1" depth="8" color="#252233"
-        material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
-      <a-box position="-3.22 -0.01 1.04" rotation="0 -18 0" width="0.06" height="0.01" depth="8" color="#10B981"
-        material="emissive: #10B981; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
-      <a-box position="-4.38 -0.01 1.42" rotation="0 -18 0" width="0.06" height="0.01" depth="8" color="#10B981"
-        material="emissive: #10B981; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+    <a-entity id="station-2-wrapper" rotation="0 -72 0">
+      <a-entity id="station-2" position="0 0 -8">
+        <!-- Walkway -->
+        <a-box position="0 -0.07 4" width="1.4" height="0.1" depth="8" color="#252233"
+          material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2">
+        </a-box>
+        <!-- Walkway glow strips -->
+        <a-box position="-0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#10B981"
+          material="emissive: #10B981; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+        <a-box position="0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#10B981"
+          material="emissive: #10B981; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
 
-      <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#222E28"
-        material="roughness: 0.85; flatShading: true; emissive: #1a2520; emissiveIntensity: 0.2"></a-cylinder>
-      <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#2D3F33"
-        material="roughness: 0.85; flatShading: true; emissive: #243528; emissiveIntensity: 0.3"></a-cylinder>
+        <!-- Platform -->
+        <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#222E28"
+          material="roughness: 0.85; flatShading: true; emissive: #1a2520; emissiveIntensity: 0.2"></a-cylinder>
+        <!-- Pedestal -->
+        <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#2D3F33"
+          material="roughness: 0.85; flatShading: true; emissive: #243528; emissiveIntensity: 0.3"></a-cylinder>
 
-      <!-- Estación 2: Arduino v2 (Movido aquí) -->
-      <a-entity id="glb-2-container" position="0 0.75 0">
-        <a-gltf-model id="glb-2" src="./arduino 2.glb" scale="1 1 1" class="interactive" cursor-listener="stationId: 2"
-          auto-scale="maxSize: 2.0" animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear">
-          <a-light type="point" intensity="1.5" distance="4" color="#fff"></a-light>
-        </a-gltf-model>
+        <!-- Estación 2: Arduino v2 -->
+        <a-entity id="glb-2-container" position="0 0.75 0">
+          <a-gltf-model id="glb-2" src="./arduino 2.glb" scale="1 1 1" class="interactive"
+            cursor-listener="stationId: 2" auto-scale="maxSize: 2.0"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear">
+            <a-light type="point" intensity="1.5" distance="4" color="#fff"></a-light>
+          </a-gltf-model>
+        </a-entity>
+
+        <a-text value="Sala Histórica" align="center" color="#B0F5D8" width="4" position="0 3.0 0"
+          font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
       </a-entity>
-
-      <!-- No glow ring here -->
-
-      <a-text value="Sala Histórica" align="center" color="#B0F5D8" width="4" position="0 3.0 0"
-        font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
     </a-entity>
 
     <!-- ══════════════════════════════════════════════════════════════ -->
     <!-- ── STATION 3 ─ 144° ─ Sala Arte ─────────────────────────── -->
     <!-- ══════════════════════════════════════════════════════════════ -->
-    <a-entity id="station-3" position="4.70 0 6.47">
-      <a-box position="-2.35 -0.07 -3.23" rotation="0 54 0" width="1.4" height="0.1" depth="8" color="#252233"
-        material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
-      <a-box position="-1.97 -0.01 -2.72" rotation="0 54 0" width="0.06" height="0.01" depth="8" color="#8B5CF6"
-        material="emissive: #8B5CF6; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
-      <a-box position="-2.73 -0.01 -3.74" rotation="0 54 0" width="0.06" height="0.01" depth="8" color="#8B5CF6"
-        material="emissive: #8B5CF6; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- ── STATION 3 ─ 144° ─ Sala Arte ─────────────────────────── -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <a-entity id="station-3-wrapper" rotation="0 -144 0">
+      <a-entity id="station-3" position="0 0 -8">
+        <!-- Walkway -->
+        <a-box position="0 -0.07 4" width="1.4" height="0.1" depth="8" color="#252233"
+          material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
+        <!-- Walkway glow strips -->
+        <a-box position="-0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#8B5CF6"
+          material="emissive: #8B5CF6; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+        <a-box position="0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#8B5CF6"
+          material="emissive: #8B5CF6; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
 
-      <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2A2540"
-        material="roughness: 0.85; flatShading: true; emissive: #221F38; emissiveIntensity: 0.2"></a-cylinder>
-      <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#3A3055"
-        material="roughness: 0.85; flatShading: true; emissive: #302848; emissiveIntensity: 0.3"></a-cylinder>
+        <!-- Platform -->
+        <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2A2540"
+          material="roughness: 0.85; flatShading: true; emissive: #221F38; emissiveIntensity: 0.2"></a-cylinder>
+        <!-- Pedestal -->
+        <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#3A3055"
+          material="roughness: 0.85; flatShading: true; emissive: #302848; emissiveIntensity: 0.3"></a-cylinder>
 
-      <!-- Estación 3: Diamante (Sala Arte) -->
-      <a-entity id="glb-3-container" position="0 0.75 0">
-        <a-gltf-model id="glb-3" src="./uploads_files_4601352_Diamond+ring.glb" scale="1 1 1" class="interactive"
-          cursor-listener="stationId: 3" auto-scale="maxSize: 2.0"
-          animation="property: rotation; to: 0 360 0; loop: true; dur: 16000; easing: linear">
-          <a-light type="point" intensity="1.5" distance="4" color="#fff"></a-light>
-        </a-gltf-model>
+        <!-- Estación 3: Diamante -->
+        <a-entity id="glb-3-container" position="0 0.75 0">
+          <a-gltf-model id="glb-3" src="./uploads_files_4601352_Diamond+ring.glb" scale="1 1 1" class="interactive"
+            cursor-listener="stationId: 3" auto-scale="maxSize: 2.0"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 16000; easing: linear">
+            <a-light type="point" intensity="1.5" distance="4" color="#fff"></a-light>
+          </a-gltf-model>
+        </a-entity>
+
+        <a-text value="Sala Arte" align="center" color="#D0BCFF" width="4" position="0 3.0 0"
+          font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
       </a-entity>
-
-      <!-- No glow ring here -->
-
-      <a-text value="Sala Arte" align="center" color="#D0BCFF" width="4" position="0 3.0 0"
-        font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
-    </a-entity>
-
-    <!-- ══════════════════════════════════════════════════════════════ -->
-    <!-- ── STATION 4 ─ 216° ─ Sala Naturaleza ───────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════════ -->
-    <a-entity id="station-4" position="-4.70 0 6.47">
-      <a-box position="2.35 -0.07 -3.23" rotation="0 -54 0" width="1.4" height="0.1" depth="8" color="#252233"
-        material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
-      <a-box position="1.97 -0.01 -2.72" rotation="0 -54 0" width="0.06" height="0.01" depth="8" color="#22C55E"
-        material="emissive: #22C55E; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
-      <a-box position="2.73 -0.01 -3.74" rotation="0 -54 0" width="0.06" height="0.01" depth="8" color="#22C55E"
-        material="emissive: #22C55E; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
-
-      <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#1E2E22"
-        material="roughness: 0.85; flatShading: true; emissive: #18251C; emissiveIntensity: 0.2"></a-cylinder>
-      <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#2A4030"
-        material="roughness: 0.85; flatShading: true; emissive: #223528; emissiveIntensity: 0.3"></a-cylinder>
-
-      <!-- GLB: MEMPHIS3 (Exhibition Mode en Estación 4) -->
-      <a-entity id="glb-4-container" position="0 0.75 0">
-        <a-gltf-model id="glb-4" src="./MEMPHIS3.glb" scale="1 1 1" class="interactive" cursor-listener="stationId: 4"
-          auto-scale="maxSize: 2.2" animation="property: rotation; to: 0 360 0; loop: true; dur: 12000; easing: linear">
-          <a-light type="point" intensity="2" distance="4" color="#fff"></a-light>
-        </a-gltf-model>
-      </a-entity>
-
-      <a-text value="Sala Naturaleza" align="center" color="#B0F5D8" width="4" position="0 3.0 0"
-        font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
-    </a-entity>
-
-    <!-- ══════════════════════════════════════════════════════════════ -->
-    <!-- ── STATION 5 ─ 288° ─ Sala Comunidad ────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════════ -->
-    <a-entity id="station-5" position="-7.61 0 -2.47">
-      <a-box position="3.8 -0.07 1.23" rotation="0 18 0" width="1.4" height="0.1" depth="8" color="#252233"
-        material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
-      <a-box position="3.22 -0.01 1.04" rotation="0 18 0" width="0.06" height="0.01" depth="8" color="#F59E0B"
-        material="emissive: #F59E0B; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
-      <a-box position="4.38 -0.01 1.42" rotation="0 18 0" width="0.06" height="0.01" depth="8" color="#F59E0B"
-        material="emissive: #F59E0B; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
-
-      <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2E2818"
-        material="roughness: 0.85; flatShading: true; emissive: #252015; emissiveIntensity: 0.2"></a-cylinder>
-      <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#403820"
-        material="roughness: 0.85; flatShading: true; emissive: #352D18; emissiveIntensity: 0.3"></a-cylinder>
-
-      <!-- Placeholder: dodecahedron (Movido aquí desde la estación 4) -->
-      <a-dodecahedron id="glb-5" position="0 1.0 0" radius="0.55" color="#B58E2E" class="interactive"
-        cursor-listener="stationId: 5" data-initial-scale="1"
-        material="roughness: 0.65; flatShading: true; emissive: #F59E0B; emissiveIntensity: 0.15"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 22000; easing: linear"></a-dodecahedron>
-
-      <a-text value="Sala Comunidad" align="center" color="#FFE8A8" width="4" position="0 3.0 0"
-        font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
     </a-entity>
 
     <!-- ── Decorative columns ── -->
@@ -248,6 +208,73 @@
       material="flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2"></a-cylinder>
     <a-cylinder position=" 0   0.6 -2.4" radius="0.12" height="1.4" color="#2A2540"
       material="flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2"></a-cylinder>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- ── STATION 4 ─ 216° ─ Sala Naturaleza ───────────────────── -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <a-entity id="station-4-wrapper" rotation="0 -216 0">
+      <a-entity id="station-4" position="0 0 -8">
+        <!-- Walkway -->
+        <a-box position="0 -0.07 4" width="1.4" height="0.1" depth="8" color="#252233"
+          material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
+        <!-- Walkway glow strips -->
+        <a-box position="-0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#22C55E"
+          material="emissive: #22C55E; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+        <a-box position="0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#22C55E"
+          material="emissive: #22C55E; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+
+        <!-- Platform -->
+        <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#1E2E22"
+          material="roughness: 0.85; flatShading: true; emissive: #18251C; emissiveIntensity: 0.2"></a-cylinder>
+        <!-- Pedestal -->
+        <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#2A4030"
+          material="roughness: 0.85; flatShading: true; emissive: #223528; emissiveIntensity: 0.3"></a-cylinder>
+
+        <!-- GLB: MEMPHIS3 -->
+        <a-entity id="glb-4-container" position="0 0.75 0">
+          <a-gltf-model id="glb-4" src="./MEMPHIS3.glb" scale="1 1 1" class="interactive" cursor-listener="stationId: 4"
+            auto-scale="maxSize: 2.2"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 12000; easing: linear">
+            <a-light type="point" intensity="2" distance="4" color="#fff"></a-light>
+          </a-gltf-model>
+        </a-entity>
+
+        <a-text value="Sala Naturaleza" align="center" color="#B0F5D8" width="4" position="0 3.0 0"
+          font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
+      </a-entity>
+    </a-entity>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- ── STATION 5 ─ 288° ─ Sala Comunidad ────────────────────── -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <a-entity id="station-5-wrapper" rotation="0 -288 0">
+      <a-entity id="station-5" position="0 0 -8">
+        <!-- Walkway -->
+        <a-box position="0 -0.07 4" width="1.4" height="0.1" depth="8" color="#252233"
+          material="roughness: 0.95; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.2"></a-box>
+        <!-- Walkway glow strips -->
+        <a-box position="-0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#F59E0B"
+          material="emissive: #F59E0B; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+        <a-box position="0.65 -0.01 4" width="0.06" height="0.01" depth="8" color="#F59E0B"
+          material="emissive: #F59E0B; emissiveIntensity: 0.8; opacity: 0.5; transparent: true"></a-box>
+
+        <!-- Platform -->
+        <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2E2818"
+          material="roughness: 0.85; flatShading: true; emissive: #252015; emissiveIntensity: 0.2"></a-cylinder>
+        <!-- Pedestal -->
+        <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#403820"
+          material="roughness: 0.85; flatShading: true; emissive: #352D18; emissiveIntensity: 0.3"></a-cylinder>
+
+        <!-- Placeholder: dodecahedron -->
+        <a-dodecahedron id="glb-5" position="0 1.0 0" radius="0.55" color="#B58E2E" class="interactive"
+          cursor-listener="stationId: 5" data-initial-scale="1"
+          material="roughness: 0.65; flatShading: true; emissive: #F59E0B; emissiveIntensity: 0.15"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 22000; easing: linear"></a-dodecahedron>
+
+        <a-text value="Sala Comunidad" align="center" color="#FFE8A8" width="4" position="0 3.0 0"
+          font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
+      </a-entity>
+    </a-entity>
 
     <!-- ── CAMERA ── -->
     <a-entity id="camera-rig" position="0 3.5 8" rotation="-12 0 0">
