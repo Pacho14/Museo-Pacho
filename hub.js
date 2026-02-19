@@ -14,9 +14,6 @@
 
     if (isMobile) {
         document.body.classList.add("is-mobile");
-        // Hide fixed a-cursor component for direct touch
-        const cursorEl = document.getElementById("fixed-cursor");
-        if (cursorEl) cursorEl.setAttribute("visible", false);
     }
 
     // Posición de cámara inicial
