@@ -75,7 +75,7 @@ const STATIONS = [
     description: "El punto de encuentro de todas las voces.\nRelatos y testimonios que unen a los seres\nen este gran viaje de descubrimiento.",
     angle: 288,
     radius: 8,
-    glb: null,
+    glb: "14.glb",
     color: "#C8B8A2",
     accentColor: "#F59E0B",
     glowColor: "#FBBF24",

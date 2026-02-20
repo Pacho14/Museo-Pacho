@@ -351,11 +351,14 @@
         <a-ring id="glow-ring-5" position="0 0.15 0" rotation="-90 0 0" radius-inner="0.6" radius-outer="0.7"
           color="#F59E0B" opacity="0" transparent="true" material="shader: flat"></a-ring>
 
-        <!-- Placeholder: dodecahedron -->
-        <a-dodecahedron id="glb-5" position="0 1.0 0" radius="0.55" color="#B58E2E" class="interactive"
-          cursor-listener="stationId: 5" data-initial-scale="1"
-          material="roughness: 0.65; flatShading: true; emissive: #F59E0B; emissiveIntensity: 0.15"
-          animation="property: rotation; to: 0 360 0; loop: true; dur: 22000; easing: linear"></a-dodecahedron>
+        <!-- GLB: Station 5 (14.glb) -->
+        <a-entity id="glb-5-container" position="0 0.75 0">
+          <a-gltf-model id="glb-5" src="./14.glb" scale="1 1 1" class="interactive" cursor-listener="stationId: 5"
+            auto-scale="maxSize: 2.2"
+            animation="property: rotation; to: 0 360 0; loop: true; dur: 22000; easing: linear">
+            <a-light type="point" intensity="1.5" distance="4" color="#FBBF24"></a-light>
+          </a-gltf-model>
+        </a-entity>
 
         <a-text value="Alianza de Mundos" align="center" color="#FFE8A8" width="4" position="0 3.0 0"
           font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
