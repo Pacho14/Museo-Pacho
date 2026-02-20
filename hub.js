@@ -62,8 +62,7 @@
             // Hide Intro Prompt
             if (prompt) prompt.setAttribute("visible", "false");
 
-            // Show HUD elements immediately
-            if (controlsGuide) controlsGuide.classList.add("visible");
+            // Los controles son permanentes en CSS
 
         } else if (rig) {
             // New Visitor: START INTRO
@@ -160,18 +159,7 @@
         backBtn.addEventListener("click", returnToHub);
         document.addEventListener("keydown", e => { if (e.key === "Escape") returnToHub(); });
 
-        // Guía de controles
-        if (closeGuideBtn) {
-            closeGuideBtn.addEventListener("click", () => {
-                controlsGuide.classList.remove("visible");
-            });
-        }
-
-        if (helpToggle) {
-            helpToggle.addEventListener("click", () => {
-                controlsGuide.classList.add("visible");
-            });
-        }
+        // Los controles ahora son permanentes (petición de usuario)
     }
 
     // ─── HOVER: Glow + Label ─────────────────────────────────────────
@@ -553,17 +541,22 @@
     function launchActivity(station) {
         console.log(`[HubWorld] Launching activity for station ${station.id}: ${station.name}`);
         const modelFile = station.glb || 'arduino 2.glb';
+        const type = station.activity ? station.activity.type : 'ar';
 
         let targetPage = 'ar-viewer.html';
 
-        if (station.id === 2) {
+        if (type === 'info') {
             targetPage = 'ar-level.html';
-        } else if (station.id === 3) {
-            // New interaction from Venezia-2
+        } else if (type === 'ring-tryon') {
             window.location.href = 'ring-tryon.html';
             return;
-        } else if (station.id === 4) {
+        } else if (type === 'bezier-game') {
+            window.location.href = 'bezier-game.html';
+            return;
+        } else if (type === 'ar') {
             targetPage = 'ar-viewer.html';
+        } else if (type === 'video') {
+            targetPage = 'ar-viewer.html'; // Default for now
         }
 
         // PERSIST STATE before leaving
@@ -692,15 +685,15 @@
         // Container
         const container = document.createElement("a-entity");
         container.id = "intro-panel-3d";
-        container.setAttribute("position", "0 2.2 0.5"); // Slightly higher
+        container.setAttribute("position", "0 2.2 0.5"); // Float above lectern
         container.setAttribute("billboard", "");
 
-        // Background (Glass look - Now Taller)
+        // Background
         const panel = document.createElement("a-plane");
         panel.setAttribute("width", "4.5");
-        panel.setAttribute("height", "3.4");
+        panel.setAttribute("height", "3.0");
         panel.setAttribute("color", "#0A0814");
-        panel.setAttribute("material", "opacity: 0.92; transparent: true; side: double; roughness: 0.1; metalness: 0.6");
+        panel.setAttribute("material", "opacity: 0.95; transparent: true; side: double; roughness: 0.2; metalness: 0.5");
         container.appendChild(panel);
 
         // Title
@@ -709,7 +702,7 @@
         title.setAttribute("align", "center");
         title.setAttribute("color", "#FFF");
         title.setAttribute("width", "7");
-        title.setAttribute("position", "0 1.25 0.01");
+        title.setAttribute("position", "0 1.1 0.01");
         title.setAttribute("font", "https://cdn.aframe.io/fonts/Exo2Bold.json");
         container.appendChild(title);
 
@@ -718,93 +711,71 @@
         subtitle.setAttribute("value", "LA AVENTURA NOS LLAMA");
         subtitle.setAttribute("align", "center");
         subtitle.setAttribute("color", "#6366F1");
-        subtitle.setAttribute("width", "3");
-        subtitle.setAttribute("position", "0 0.95 0.01");
+        subtitle.setAttribute("width", "3.5");
+        subtitle.setAttribute("position", "0 0.85 0.01");
         container.appendChild(subtitle);
 
-        // Divider
-        const divider = document.createElement("a-plane");
-        divider.setAttribute("width", "2");
-        divider.setAttribute("height", "0.01");
-        divider.setAttribute("color", "#6366F1");
-        divider.setAttribute("position", "0 0.85 0.01");
-        container.appendChild(divider);
-
-        // Text (Using 'anchor: top' to ensure it only grows DOWNWARDS from Y=0.7)
+        // Text (No accents for robustness)
         const curatorialText = "Expedicion P-5 es una exhibicion de un viaje espacial en donde la exploracion es nuestra principal herramienta. Con ella podemos adentrarnos a distintos universos adquiriendo saberes desconocidos a partir de experiencias conectadas con lo que vivimos, con lo que sentimos, con lo que hacemos que nos permiten descubrir para que somos buenos y poder condesar esa energia a esa aventura que nos llama.\n\nExplorar es arriesgarse, es dar ese salto de fe a ese mundo sin descubrir, sin miedo a lo que pueda pasar.";
 
         const text = document.createElement("a-text");
         text.setAttribute("value", curatorialText);
         text.setAttribute("align", "center");
-        text.setAttribute("anchor", "center"); // Center horizontally
-        text.setAttribute("baseline", "top"); // Grow downwards!
-        text.setAttribute("color", "#CCC");
-        text.setAttribute("width", "3.8");
-        text.setAttribute("position", "0 0.7 0.01");
-        text.setAttribute("wrap-count", "50");
+        text.setAttribute("anchor", "center");
+        text.setAttribute("baseline", "top");
+        text.setAttribute("color", "#E0E0E0");
+        text.setAttribute("width", "4.0");
+        text.setAttribute("position", "0 0.6 0.01");
+        text.setAttribute("wrap-count", "48");
         text.setAttribute("line-height", "55");
         container.appendChild(text);
 
-        // Button: INICIAR RECORRIDO
-        const btnGroup = document.createElement("a-entity");
-        btnGroup.setAttribute("position", "0 -1.25 0.02"); // Moved further down
-        btnGroup.setAttribute("class", "interactive cta-button");
+        // Show HUD button with a slight delay
+        const ctaWrapper = document.getElementById("intro-cta-wrapper");
+        const ctaBtn = document.getElementById("intro-start-btn");
 
-        const btnBg = document.createElement("a-plane");
-        btnBg.setAttribute("class", "interactive");
-        btnBg.setAttribute("width", "2.6");
-        btnBg.setAttribute("height", "0.6");
-        btnBg.setAttribute("color", "#6366F1");
-        btnBg.setAttribute("material", "shader: flat; opacity: 1");
-        btnGroup.appendChild(btnBg);
+        if (ctaWrapper && ctaBtn) {
+            // Remove any old listeners to avoid multiple fires
+            const newCtaBtn = ctaBtn.cloneNode(true);
+            ctaBtn.parentNode.replaceChild(newCtaBtn, ctaBtn);
 
-        const btnText = document.createElement("a-text");
-        btnText.setAttribute("value", "INICIAR RECORRIDO");
-        btnText.setAttribute("align", "center");
-        btnText.setAttribute("color", "#FFF");
-        btnText.setAttribute("width", "4.8");
-        btnText.setAttribute("position", "0 0 0.01");
-        btnText.setAttribute("font", "https://cdn.aframe.io/fonts/Exo2Bold.json");
-        btnGroup.appendChild(btnText);
+            setTimeout(() => {
+                ctaWrapper.classList.add("visible");
+            }, 1500);
 
-        container.appendChild(btnGroup);
+            // Click Logic
+            newCtaBtn.addEventListener("click", () => {
+                isIntroMode = false;
+                const introSpot = document.getElementById("intro-spot");
+                if (introSpot) {
+                    introSpot.setAttribute("animation__off", { property: "light.intensity", to: 0, dur: 1000 });
+                    setTimeout(() => introSpot.remove(), 1000);
+                }
+                container.setAttribute("animation__exit", { property: "scale", to: "0 0 0", dur: 500 });
+                setTimeout(() => container.remove(), 500);
 
-        // Hover effects
-        btnGroup.addEventListener("mouseenter", () => {
-            document.body.style.cursor = "pointer";
-            btnBg.setAttribute("color", "#818CF8");
-        });
-        btnGroup.addEventListener("mouseleave", () => {
-            document.body.style.cursor = "default";
-            btnBg.setAttribute("color", "#6366F1");
-        });
+                // Hide HUD button
+                ctaWrapper.classList.remove("visible");
 
-        // Click Handler
-        btnGroup.addEventListener("click", () => {
-            isIntroMode = false;
-            const introSpot = document.getElementById("intro-spot");
-            if (introSpot) {
-                introSpot.setAttribute("animation__off", { property: "light.intensity", to: 0, dur: 800 });
-                setTimeout(() => introSpot.remove(), 800);
-            }
-            container.setAttribute("animation__exit", { property: "scale", to: "0 0 0", dur: 500 });
-            setTimeout(() => container.remove(), 500);
-            focusStation(1);
-        });
+                focusStation(1);
+            });
+        }
 
-        // Entrance
+
+
+        scene.appendChild(container);
+
+        // Entrance animation
         container.setAttribute("scale", "0.01 0.01 0.01");
         container.setAttribute("animation__enter", {
             property: "scale",
             to: "1 1 1",
             dur: 800,
-            easing: "easeOutBack"
+            easing: "easeOutBack",
+            delay: 100
         });
 
-        scene.appendChild(container);
 
-        // Also show Controls Guide now
-        if (controlsGuide) controlsGuide.classList.add("visible");
     }
     function computeLookAtRotation(from, to) {
         const dx = to.x - from.x;

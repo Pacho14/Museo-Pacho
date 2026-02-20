@@ -6,26 +6,10 @@
 const STATIONS = [
   {
     id: 1,
-    name: "Núcleo de Origen",
-    subtitle: "Base Estelar Memphiana",
-    description: "Inicia tu viaje en el centro de mando.\nAquí convergen los saberes fundamentales\nque impulsan nuestra exploración espacial.",
+    name: "ARDUINO BALANCIN",
+    subtitle: "Robotica",
+    description: "Francisco Mendoza\nArduino",
     angle: 0,
-    radius: 8,
-    glb: null,
-    color: "#C7B89A",
-    accentColor: "#6366F1",
-    glowColor: "#818CF8",
-    activity: {
-      type: "ar",
-      label: "Explorar en Inmersión 3D"
-    }
-  },
-  {
-    id: 2,
-    name: "Archivo de Galaxias",
-    subtitle: "Memoria del Tiempo",
-    description: "Navega a través de los registros históricos.\nDocumentos y artefactos que narran el paso\nde nuestra civilización por el cosmos.",
-    angle: 72,
     radius: 8,
     glb: "arduino 2.glb",
     color: "#A8B5A2",
@@ -37,11 +21,11 @@ const STATIONS = [
     }
   },
   {
-    id: 3,
+    id: 2,
     name: "Nebulosa Creativa",
     subtitle: "Expresión sin Límites",
     description: "Adéntrate en nubes de color y forma.\nObras artísticas que desafían la gravedad\ny expanden nuestra percepción visual.",
-    angle: 144,
+    angle: 72,
     radius: 8,
     glb: "uploads_files_4601352_Diamond+ring.glb",
     color: "#B8A8C8",
@@ -53,10 +37,26 @@ const STATIONS = [
     }
   },
   {
+    id: 3,
+    name: "Núcleo de Origen",
+    subtitle: "Base Estelar Memphiana",
+    description: "Inicia tu viaje en el centro de mando.\nAquí convergen los saberes fundamentales\nque impulsan nuestra exploración espacial.",
+    angle: 144,
+    radius: 8,
+    glb: "20_2_2026.glb",
+    color: "#C7B89A",
+    accentColor: "#6366F1",
+    glowColor: "#818CF8",
+    activity: {
+      type: "bezier-game",
+      label: "Desafío de Precisión Bézier"
+    }
+  },
+  {
     id: 4,
-    name: "Bio-Dominio",
-    subtitle: "Mundos Vivos",
-    description: "Descubre la biodiversidad de planetas lejanos.\nSistemas ecológicos y vida orgánica\nen equilibrio con la tecnología avanzada.",
+    name: "LAMPARA FOGATA",
+    subtitle: "Sistema de iluminación",
+    description: "Francisco Mendoza\nABS (Plastico)",
     angle: 216,
     radius: 8,
     glb: "MEMPHIS3.glb",
