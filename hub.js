@@ -680,103 +680,43 @@
     }
 
     function spawnIntroPanel() {
-        const scene = document.querySelector("a-scene");
-
-        // Container
-        const container = document.createElement("a-entity");
-        container.id = "intro-panel-3d";
-        container.setAttribute("position", "0 2.2 0.5"); // Float above lectern
-        container.setAttribute("billboard", "");
-
-        // Background
-        const panel = document.createElement("a-plane");
-        panel.setAttribute("width", "4.5");
-        panel.setAttribute("height", "3.0");
-        panel.setAttribute("color", "#0A0814");
-        panel.setAttribute("material", "opacity: 0.95; transparent: true; side: double; roughness: 0.2; metalness: 0.5");
-        container.appendChild(panel);
-
-        // Title
-        const title = document.createElement("a-text");
-        title.setAttribute("value", "EXPEDICION P-5");
-        title.setAttribute("align", "center");
-        title.setAttribute("color", "#FFF");
-        title.setAttribute("width", "7");
-        title.setAttribute("position", "0 1.1 0.01");
-        title.setAttribute("font", "https://cdn.aframe.io/fonts/Exo2Bold.json");
-        container.appendChild(title);
-
-        // Subtitle
-        const subtitle = document.createElement("a-text");
-        subtitle.setAttribute("value", "LA AVENTURA NOS LLAMA");
-        subtitle.setAttribute("align", "center");
-        subtitle.setAttribute("color", "#6366F1");
-        subtitle.setAttribute("width", "3.5");
-        subtitle.setAttribute("position", "0 0.85 0.01");
-        container.appendChild(subtitle);
-
-        // Text (No accents for robustness)
-        const curatorialText = "Expedicion P-5 es una exhibicion de un viaje espacial en donde la exploracion es nuestra principal herramienta. Con ella podemos adentrarnos a distintos universos adquiriendo saberes desconocidos a partir de experiencias conectadas con lo que vivimos, con lo que sentimos, con lo que hacemos que nos permiten descubrir para que somos buenos y poder condesar esa energia a esa aventura que nos llama.\n\nExplorar es arriesgarse, es dar ese salto de fe a ese mundo sin descubrir, sin miedo a lo que pueda pasar.";
-
-        const text = document.createElement("a-text");
-        text.setAttribute("value", curatorialText);
-        text.setAttribute("align", "center");
-        text.setAttribute("anchor", "center");
-        text.setAttribute("baseline", "top");
-        text.setAttribute("color", "#E0E0E0");
-        text.setAttribute("width", "4.0");
-        text.setAttribute("position", "0 0.6 0.01");
-        text.setAttribute("wrap-count", "48");
-        text.setAttribute("line-height", "55");
-        container.appendChild(text);
-
-        // Show HUD button with a slight delay
-        const ctaWrapper = document.getElementById("intro-cta-wrapper");
+        const overlay = document.getElementById("intro-overlay");
         const ctaBtn = document.getElementById("intro-start-btn");
 
-        if (ctaWrapper && ctaBtn) {
+        if (overlay && ctaBtn) {
+            // Ensure overlay is visible
+            overlay.classList.remove("hidden");
+
+            // Trigger animation after a small delay
+            setTimeout(() => {
+                overlay.classList.add("visible");
+            }, 500);
+
             // Remove any old listeners to avoid multiple fires
             const newCtaBtn = ctaBtn.cloneNode(true);
             ctaBtn.parentNode.replaceChild(newCtaBtn, ctaBtn);
 
-            setTimeout(() => {
-                ctaWrapper.classList.add("visible");
-            }, 1500);
-
             // Click Logic
             newCtaBtn.addEventListener("click", () => {
                 isIntroMode = false;
+
                 const introSpot = document.getElementById("intro-spot");
                 if (introSpot) {
                     introSpot.setAttribute("animation__off", { property: "light.intensity", to: 0, dur: 1000 });
                     setTimeout(() => introSpot.remove(), 1000);
                 }
-                container.setAttribute("animation__exit", { property: "scale", to: "0 0 0", dur: 500 });
-                setTimeout(() => container.remove(), 500);
 
-                // Hide HUD button
-                ctaWrapper.classList.remove("visible");
+                // Hide the Premium Overlay
+                overlay.classList.remove("visible");
+                setTimeout(() => {
+                    overlay.classList.add("hidden");
+                }, 1200);
 
                 focusStation(1);
             });
         }
-
-
-
-        scene.appendChild(container);
-
-        // Entrance animation
-        container.setAttribute("scale", "0.01 0.01 0.01");
-        container.setAttribute("animation__enter", {
-            property: "scale",
-            to: "1 1 1",
-            dur: 800,
-            easing: "easeOutBack",
-            delay: 100
-        });
-
-
     }
+
     function computeLookAtRotation(from, to) {
         const dx = to.x - from.x;
         const dy = to.y - from.y;
