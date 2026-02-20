@@ -33,9 +33,15 @@
     // ─── Init ────────────────────────────────────────────────────────
     function init() {
         buildStationNav();
+        initLighting();
+        initConnections();
         bindEvents();
         hideLoadingScreen();
-        if (isMobile) initJoystick();
+
+        if (isMobile) {
+            initJoystick();
+            optimizeForMobile();
+        }
 
         // Desactivar mirada por ratón en Desktop (petición de usuario: "suprimela")
         // Pero mantener el componente activo para no romper el cursor/raycaster
@@ -144,6 +150,17 @@
         const station = STATIONS.find(s => s.id === stationId);
         if (!station) return;
 
+        // Connection Line Pulse
+        const line = document.getElementById(`line-${stationId}`);
+        if (line) {
+            line.setAttribute("animation__pulse", {
+                property: "opacity",
+                to: 1,
+                dur: 300,
+                easing: "easeOutQuad"
+            });
+        }
+
         const el = document.getElementById(`glb-${stationId}`);
         if (!el) return;
 
@@ -158,6 +175,14 @@
             dur: 300,
             easing: "easeOutBack"
         });
+
+        // Speed up rotation
+        // Store original duration if not saved
+        if (!el.dataset.baseDur) {
+            const attr = el.getAttribute('animation');
+            el.dataset.baseDur = attr ? attr.dur : 20000;
+        }
+        el.setAttribute('animation', 'dur', 4000);
 
         // Glow ring
         const ring = document.getElementById(`glow-ring-${stationId}`);
@@ -178,6 +203,18 @@
 
     window.onStationLeave = function (stationId) {
         if (activeStation) return;
+
+        // Reset Connection Line
+        const line = document.getElementById(`line-${stationId}`);
+        if (line) {
+            line.setAttribute("animation__pulse", {
+                property: "opacity",
+                to: 0.3,
+                dur: 500,
+                easing: "easeOutQuad"
+            });
+        }
+
         const el = document.getElementById(`glb-${stationId}`);
         if (!el) return;
 
@@ -190,6 +227,11 @@
             dur: 300,
             easing: "easeOutCubic"
         });
+
+        // Restore rotation speed
+        if (el.dataset.baseDur) {
+            el.setAttribute('animation', 'dur', el.dataset.baseDur);
+        }
 
         const ring = document.getElementById(`glow-ring-${stationId}`);
         if (ring) {
@@ -567,6 +609,71 @@
         const yaw = Math.atan2(dx, dz) * (180 / Math.PI);
         const pitch = Math.atan2(dy, dist) * (180 / Math.PI);
         return { x: pitch, y: yaw + 180, z: 0 };
+    }
+
+    // ─── VISUALS & OPTIMIZATION ──────────────────────────────────────
+    function initLighting() {
+        const scene = document.querySelector("a-scene");
+
+        // Hemisphere light for better ambient
+        const hemi = document.createElement("a-light");
+        hemi.setAttribute("type", "hemisphere");
+        hemi.setAttribute("color", "#D0BCFF");
+        hemi.setAttribute("groundColor", "#1C1B1F");
+        hemi.setAttribute("intensity", "0.4");
+        scene.appendChild(hemi);
+
+        // Shadow config for directional light (Desktop only)
+        const dir1 = document.getElementById("dir-light-1");
+        if (dir1 && !isMobile) {
+            dir1.setAttribute("light", "castShadow: true; shadowMapWidth: 2048; shadowMapHeight: 2048; shadowBias: -0.0001");
+        }
+    }
+
+    function initConnections() {
+        const parent = document.getElementById("connections");
+        if (!parent) return;
+
+        STATIONS.forEach(s => {
+            const line = document.createElement("a-entity");
+            // Simple visual line using meshline or geometry? A-Frame line component is basic gl.LINES
+            // Using thin box for better visibility and glow potential
+            const dist = s.radius - 2.5;
+            const rad = (s.angle * Math.PI) / 180;
+
+            // Calc endpoint
+            const endX = Math.sin(rad) * dist;
+            const endZ = -Math.cos(rad) * dist;
+
+            // We use a-entity with line component for "Energy Beam" style
+            line.setAttribute("line", {
+                start: { x: 0, y: 0.1, z: 0 },
+                end: { x: endX, y: 0.1, z: endZ },
+                color: s.accentColor,
+                opacity: 0.3
+            });
+            line.id = `line-${s.id}`;
+            parent.appendChild(line);
+        });
+    }
+
+    function optimizeForMobile() {
+        console.log("[Hub] Optimizing for Mobile...");
+        const scene = document.querySelector("a-scene");
+        if (scene) {
+            // Disable expensive shadows
+            scene.setAttribute("shadow", "type: basic; autoUpdate: false");
+            // Simpler fog
+            scene.setAttribute("fog", "density: 0.015");
+        }
+
+        // Hide particles to save draw calls
+        const particles = document.getElementById("particles");
+        if (particles) {
+            particles.setAttribute("visible", "false");
+        }
+
+        // Simpler textures/materials could be swapped here
     }
 
     // ─── Arranque ────────────────────────────────────────────────────

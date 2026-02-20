@@ -15,6 +15,13 @@
 
 <body>
 
+  <!-- ── Rotate Device Overlay ── -->
+  <div id="rotate-overlay">
+    <div class="rotate-icon">↻</div>
+    <p>Por favor, gira tu dispositivo</p>
+    <p class="rotate-sub">Para la mejor experiencia inmersiva</p>
+  </div>
+
   <!-- ── Loading screen ── -->
   <div id="loading-screen">
     <div class="loader-ring"></div>
@@ -22,8 +29,9 @@
   </div>
 
   <!-- ── A-Frame 3D Scene ── -->
-  <a-scene id="main-scene" renderer="antialias: true; colorManagement: true;" vr-mode-ui="enabled: false"
-    loading-screen="enabled: false" fog="type: exponential; color: #1a1820; density: 0.02">
+  <a-scene id="main-scene" renderer="antialias: true; colorManagement: true; sortObjects: true"
+    vr-mode-ui="enabled: false" loading-screen="enabled: false" shadow="type: pcfsoft"
+    fog="type: exponential; color: #100c14; density: 0.035">
 
     <!-- Assets: skipping a-assets for GLB to avoid file:// CORS issues -->
     <!-- GLB is loaded directly via src attribute on gltf-model -->
@@ -89,6 +97,9 @@
         material="emissive: #FB923C; emissiveIntensity: 1; opacity: 0.45; transparent: true"
         animation="property: position; to: -0.5 3 -6.5; dur: 4200; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
     </a-entity>
+
+    <!-- ── Connection Lines (Energy Flow) ── -->
+    <a-entity id="connections"></a-entity>
 
     <!-- ══════════════════════════════════════════════════════════════ -->
     <!-- ── STATION 1 ─ 0° ─ Sala Memphiana ──────────────────────── -->
