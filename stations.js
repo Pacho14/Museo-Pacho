@@ -70,9 +70,9 @@ const STATIONS = [
   },
   {
     id: 5,
-    name: "Alianza de Mundos",
-    subtitle: "Conexión Universal",
-    description: "El punto de encuentro de todas las voces.\nRelatos y testimonios que unen a los seres\nen este gran viaje de descubrimiento.",
+    name: "WASA",
+    subtitle: "Mobiliario",
+    description: "Francisco Mendoza\nTuberia de Acero-MDP",
     angle: 288,
     radius: 8,
     glb: "14.glb",
