@@ -457,7 +457,8 @@
 
         // Button text
         const btnText = document.createElement("a-text");
-        btnText.setAttribute("value", "EXPLORAR");
+        const activityLabel = (station.activity && station.activity.label) ? station.activity.label.toUpperCase() : "EXPLORAR";
+        btnText.setAttribute("value", activityLabel);
         btnText.setAttribute("align", "center");
         btnText.setAttribute("color", "#381E72");
         btnText.setAttribute("width", "3.2");
@@ -552,6 +553,11 @@
             return;
         } else if (type === 'bezier-game') {
             window.location.href = 'bezier-game.html';
+            return;
+        } else if (type === 'wasa-configurator') {
+            localStorage.setItem("last_visited_station", station.id);
+            localStorage.setItem(`station_${station.id}_completed`, "true");
+            window.location.href = 'wasa-configurator.html';
             return;
         } else if (type === 'ar') {
             targetPage = 'ar-viewer.html';
