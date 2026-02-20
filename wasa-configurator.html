@@ -289,7 +289,7 @@
         </a-ring>
 
         <!-- Model Container — only ONE model visible at a time -->
-        <a-entity id="model-container" position="0 0.1 0">
+        <a-entity id="model-container" position="0 0 0">
             <!-- Variant 0: 14.glb (loaded immediately as default) -->
             <a-gltf-model id="model-0" src="./14.glb" visible="true" auto-scale="maxSize: 2.5"
                 animation="property: rotation; to: 0 360 0; loop: true; dur: 18000; easing: linear">
@@ -300,9 +300,8 @@
         </a-entity>
 
         <!-- Camera -->
-        <a-entity id="camera-rig" position="0 1.5 4">
-            <a-camera look-controls="enabled: true; magicWindowTrackingEnabled: true" wasd-controls="enabled: false"
-                fov="60">
+        <a-entity id="camera-rig" position="0 1.6 3.5" rotation="-15 0 0">
+            <a-camera look-controls="enabled: false" wasd-controls="enabled: false" fov="55">
             </a-camera>
         </a-entity>
 
