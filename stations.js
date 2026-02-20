@@ -22,9 +22,9 @@ const STATIONS = [
   },
   {
     id: 2,
-    name: "Nebulosa Creativa",
-    subtitle: "Expresión sin Límites",
-    description: "Adéntrate en nubes de color y forma.\nObras artísticas que desafían la gravedad\ny expanden nuestra percepción visual.",
+    name: "VISUALIZACION FOTOREALISTA Y PROTOTIPADO DE JOYERIA",
+    subtitle: "Modelado 3D",
+    description: "Francisco Mendoza\nInmersión virtual",
     angle: 72,
     radius: 8,
     glb: "uploads_files_4601352_Diamond+ring.glb",
