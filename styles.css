@@ -214,7 +214,8 @@ a-scene {
 #back-to-hub {
   position: fixed;
   top: 24px;
-  left: 24px;
+  right: 24px;
+  left: auto;
   display: none;
   align-items: center;
   gap: 12px;
@@ -392,11 +393,12 @@ body.cinematic #station-nav {
 /* ── CONTROLS GUIDE PREMIUM ── */
 #controls-guide {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
-  width: 90%;
-  max-width: 320px;
+  top: 24px;
+  left: 24px;
+  transform: scale(0.9);
+  transform-origin: top left;
+  width: auto;
+  max-width: 280px;
   background: rgba(28, 27, 31, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -416,7 +418,7 @@ body.cinematic #station-nav {
 #controls-guide.visible {
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, -50%) scale(1);
+  transform: scale(1);
 }
 
 #controls-guide h3 {

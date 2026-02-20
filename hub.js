@@ -16,9 +16,15 @@
         document.body.classList.add("is-mobile");
     }
 
-    // Posición de cámara inicial (Vista Frontal Elevada)
+    // Posición de cámara inicial (Vista Intro - Frente al Atril)
+    const INTRO_POS = { x: 0, y: 1.8, z: 3.5 };
+    const INTRO_ROT = { x: -15, y: 0, z: 0 };
+
+    // Posición Hub General (Vista Aérea)
     const HOME_POS = { x: 0, y: 7.5, z: 13.5 };
     const HOME_ROT = { x: -25, y: 0, z: 0 };
+
+    let isIntroMode = true; // State for start
 
     // ─── Refs DOM ────────────────────────────────────────────────────
     const stationLabel = document.getElementById("station-label");
@@ -31,6 +37,7 @@
     const helpToggle = document.getElementById("help-toggle");
 
     // ─── Init ────────────────────────────────────────────────────────
+    // ─── Init ────────────────────────────────────────────────────────
     function init() {
         buildStationNav();
         initLighting();
@@ -38,10 +45,39 @@
         bindEvents();
         hideLoadingScreen();
 
+        // CHECK RETURN STATUS
+        const lastVisited = localStorage.getItem("last_visited_station");
+        const rig = document.getElementById('camera-rig');
+        const prompt = document.getElementById("start-prompt");
+
+        if (lastVisited && rig) {
+            // Returning Visitor: SKIP INTRO, GO TO HOME
+            console.log("[Hub] Returning visitor detected. Skipping intro.");
+            isIntroMode = false;
+
+            // Set Camera to Home Position
+            rig.setAttribute('position', `${HOME_POS.x} ${HOME_POS.y} ${HOME_POS.z}`);
+            rig.setAttribute('rotation', `${HOME_ROT.x} ${HOME_ROT.y} ${HOME_ROT.z}`);
+
+            // Hide Intro Prompt
+            if (prompt) prompt.setAttribute("visible", "false");
+
+            // Show HUD elements immediately
+            if (controlsGuide) controlsGuide.classList.add("visible");
+
+        } else if (rig) {
+            // New Visitor: START INTRO
+            rig.setAttribute('position', `${INTRO_POS.x} ${INTRO_POS.y} ${INTRO_POS.z}`);
+            rig.setAttribute('rotation', `${INTRO_ROT.x} ${INTRO_ROT.y} ${INTRO_ROT.z}`);
+        }
+
         if (isMobile) {
             initJoystick();
             optimizeForMobile();
         }
+
+        // Check for returning visitor logic (Highlights)
+        checkProgression();
 
         // Desactivar mirada por ratón en Desktop (petición de usuario: "suprimela")
         // Pero mantener el componente activo para no romper el cursor/raycaster
@@ -53,12 +89,6 @@
                 touchEnabled: true
             });
         }
-
-
-        // Mostrar guía premium al inicio tras fade-out de loading
-        setTimeout(() => {
-            if (controlsGuide) controlsGuide.classList.add("visible");
-        }, 1500);
     }
 
     function initJoystick() {
@@ -146,6 +176,7 @@
 
     // ─── HOVER: Glow + Label ─────────────────────────────────────────
     window.onStationHover = function (stationId) {
+        if (isIntroMode) return; // LOCK: No background interactions during intro
         if (activeStation) return;
         const station = STATIONS.find(s => s.id === stationId);
         if (!station) return;
@@ -248,10 +279,21 @@
     };
 
     // ─── CLICK: Cinematic Focus ──────────────────────────────────────
+    // ─── CLICK: Cinematic Focus ──────────────────────────────────────
     window.focusStation = function (stationId) {
         if (isAnimating || activeStation) return;
+
+        // Special Case: INTRO (ID 99)
+        if (stationId === 99) {
+            startExperience();
+            return;
+        }
+
+        if (isIntroMode) return; // LOCK: No other stations during intro
+
         const station = STATIONS.find(s => s.id === stationId);
         if (!station) return;
+
 
         isAnimating = true;
         activeStation = station;
@@ -524,6 +566,10 @@
             targetPage = 'ar-viewer.html';
         }
 
+        // PERSIST STATE before leaving
+        localStorage.setItem("last_visited_station", station.id);
+        localStorage.setItem(`station_${station.id}_completed`, "true");
+
         setTimeout(() => {
             window.location.href = `${targetPage}?model=${encodeURIComponent(modelFile)}`;
         }, 500);
@@ -577,6 +623,7 @@
             easing: "easeInOutCubic"
         });
 
+
         // Re-enable controls after animation
         setTimeout(() => {
             const camera = document.getElementById("main-camera");
@@ -600,7 +647,165 @@
         }, 1300);
     }
 
-    // ─── UTILS ───────────────────────────────────────────────────────
+    // ─── INTRO EXPERIENCE ───────────────────────────────────────────
+    function startExperience() {
+        if (isAnimating) return;
+        isAnimating = true;
+        // Keep isIntroMode = true until unlocked
+
+        // Hide Prompt
+        const prompt = document.getElementById("start-prompt");
+        if (prompt) prompt.setAttribute("visible", "false");
+
+        // Stop the pulse animation on lectern
+        const lectern = document.getElementById("lectern-top");
+        if (lectern) lectern.removeAttribute("animation");
+
+        // Dim Lights (Focus Mode)
+        const ambient = document.getElementById("ambient-light");
+        const dir1 = document.getElementById("dir-light-1");
+        const introSpot = document.getElementById("intro-spot");
+
+        if (ambient) ambient.setAttribute("animation__dim", { property: "light.intensity", to: 0.2, dur: 1000 });
+        if (dir1) dir1.setAttribute("animation__dim", { property: "light.intensity", to: 0.1, dur: 1000 });
+        if (introSpot) introSpot.setAttribute("animation__bright", { property: "light.intensity", to: 2.5, dur: 1000 });
+
+        // Animate Camera to "Reading Position"
+        const rig = document.getElementById("camera-rig");
+        rig.setAttribute("animation__intro", {
+            property: "position",
+            to: "0 1.6 2.5",
+            dur: 1500,
+            easing: "easeInOutQuad"
+        });
+
+        // Spawn Welcome Panel
+        setTimeout(() => {
+            spawnIntroPanel();
+            isAnimating = false;
+        }, 1600);
+    }
+
+    function spawnIntroPanel() {
+        const scene = document.querySelector("a-scene");
+
+        // Container
+        const container = document.createElement("a-entity");
+        container.id = "intro-panel-3d";
+        container.setAttribute("position", "0 2.2 0.5"); // Slightly higher
+        container.setAttribute("billboard", "");
+
+        // Background (Glass look - Now Taller)
+        const panel = document.createElement("a-plane");
+        panel.setAttribute("width", "4.5");
+        panel.setAttribute("height", "3.4");
+        panel.setAttribute("color", "#0A0814");
+        panel.setAttribute("material", "opacity: 0.92; transparent: true; side: double; roughness: 0.1; metalness: 0.6");
+        container.appendChild(panel);
+
+        // Title
+        const title = document.createElement("a-text");
+        title.setAttribute("value", "EXPEDICION P-5");
+        title.setAttribute("align", "center");
+        title.setAttribute("color", "#FFF");
+        title.setAttribute("width", "7");
+        title.setAttribute("position", "0 1.25 0.01");
+        title.setAttribute("font", "https://cdn.aframe.io/fonts/Exo2Bold.json");
+        container.appendChild(title);
+
+        // Subtitle
+        const subtitle = document.createElement("a-text");
+        subtitle.setAttribute("value", "LA AVENTURA NOS LLAMA");
+        subtitle.setAttribute("align", "center");
+        subtitle.setAttribute("color", "#6366F1");
+        subtitle.setAttribute("width", "3");
+        subtitle.setAttribute("position", "0 0.95 0.01");
+        container.appendChild(subtitle);
+
+        // Divider
+        const divider = document.createElement("a-plane");
+        divider.setAttribute("width", "2");
+        divider.setAttribute("height", "0.01");
+        divider.setAttribute("color", "#6366F1");
+        divider.setAttribute("position", "0 0.85 0.01");
+        container.appendChild(divider);
+
+        // Text (Using 'anchor: top' to ensure it only grows DOWNWARDS from Y=0.7)
+        const curatorialText = "Expedicion P-5 es una exhibicion de un viaje espacial en donde la exploracion es nuestra principal herramienta. Con ella podemos adentrarnos a distintos universos adquiriendo saberes desconocidos a partir de experiencias conectadas con lo que vivimos, con lo que sentimos, con lo que hacemos que nos permiten descubrir para que somos buenos y poder condesar esa energia a esa aventura que nos llama.\n\nExplorar es arriesgarse, es dar ese salto de fe a ese mundo sin descubrir, sin miedo a lo que pueda pasar.";
+
+        const text = document.createElement("a-text");
+        text.setAttribute("value", curatorialText);
+        text.setAttribute("align", "center");
+        text.setAttribute("anchor", "center"); // Center horizontally
+        text.setAttribute("baseline", "top"); // Grow downwards!
+        text.setAttribute("color", "#CCC");
+        text.setAttribute("width", "3.8");
+        text.setAttribute("position", "0 0.7 0.01");
+        text.setAttribute("wrap-count", "50");
+        text.setAttribute("line-height", "55");
+        container.appendChild(text);
+
+        // Button: INICIAR RECORRIDO
+        const btnGroup = document.createElement("a-entity");
+        btnGroup.setAttribute("position", "0 -1.25 0.02"); // Moved further down
+        btnGroup.setAttribute("class", "interactive cta-button");
+
+        const btnBg = document.createElement("a-plane");
+        btnBg.setAttribute("class", "interactive");
+        btnBg.setAttribute("width", "2.6");
+        btnBg.setAttribute("height", "0.6");
+        btnBg.setAttribute("color", "#6366F1");
+        btnBg.setAttribute("material", "shader: flat; opacity: 1");
+        btnGroup.appendChild(btnBg);
+
+        const btnText = document.createElement("a-text");
+        btnText.setAttribute("value", "INICIAR RECORRIDO");
+        btnText.setAttribute("align", "center");
+        btnText.setAttribute("color", "#FFF");
+        btnText.setAttribute("width", "4.8");
+        btnText.setAttribute("position", "0 0 0.01");
+        btnText.setAttribute("font", "https://cdn.aframe.io/fonts/Exo2Bold.json");
+        btnGroup.appendChild(btnText);
+
+        container.appendChild(btnGroup);
+
+        // Hover effects
+        btnGroup.addEventListener("mouseenter", () => {
+            document.body.style.cursor = "pointer";
+            btnBg.setAttribute("color", "#818CF8");
+        });
+        btnGroup.addEventListener("mouseleave", () => {
+            document.body.style.cursor = "default";
+            btnBg.setAttribute("color", "#6366F1");
+        });
+
+        // Click Handler
+        btnGroup.addEventListener("click", () => {
+            isIntroMode = false;
+            const introSpot = document.getElementById("intro-spot");
+            if (introSpot) {
+                introSpot.setAttribute("animation__off", { property: "light.intensity", to: 0, dur: 800 });
+                setTimeout(() => introSpot.remove(), 800);
+            }
+            container.setAttribute("animation__exit", { property: "scale", to: "0 0 0", dur: 500 });
+            setTimeout(() => container.remove(), 500);
+            focusStation(1);
+        });
+
+        // Entrance
+        container.setAttribute("scale", "0.01 0.01 0.01");
+        container.setAttribute("animation__enter", {
+            property: "scale",
+            to: "1 1 1",
+            dur: 800,
+            easing: "easeOutBack"
+        });
+
+        scene.appendChild(container);
+
+        // Also show Controls Guide now
+        if (controlsGuide) controlsGuide.classList.add("visible");
+    }
     function computeLookAtRotation(from, to) {
         const dx = to.x - from.x;
         const dy = to.y - from.y;
@@ -674,6 +879,60 @@
         }
 
         // Simpler textures/materials could be swapped here
+    }
+
+    // ─── PROGRESSION SYSTEM ──────────────────────────────────────────
+    function checkProgression() {
+        const last = localStorage.getItem("last_visited_station");
+        let next = null;
+
+        if (last === "1") next = 2;
+        else if (last === "2") next = 3;
+        else if (last === "3") next = 4;
+        else if (last === "4") next = 5;
+
+        if (next) {
+            console.log(`[Progression] Returning from Station ${last}. Suggesting Station ${next}.`);
+
+            // Wait for scene to stabilize then highlight
+            setTimeout(() => {
+                highlightStation(next);
+            }, 2000);
+        }
+    }
+
+    function highlightStation(stationId) {
+        const station = STATIONS.find(s => s.id === stationId);
+        if (!station) return;
+
+        // Visual Queue: Pulse the ring permanently until hovered
+        const ring = document.getElementById(`glow-ring-${stationId}`);
+        if (ring) {
+            // Stronger pulse
+            ring.setAttribute("material", `color: ${station.glowColor}; emissive: ${station.glowColor}; emissiveIntensity: 1; opacity: 0.8; transparent: true`);
+            ring.setAttribute("animation__suggestion", {
+                property: "scale",
+                from: "1 1 1",
+                to: "1.3 1.3 1.3",
+                dur: 1000,
+                dir: "alternate",
+                loop: true,
+                easing: "easeInOutSine"
+            });
+        }
+
+        // Also maybe a beam?
+        const line = document.getElementById(`line-${stationId}`);
+        if (line) {
+            line.setAttribute("animation__suggestion", {
+                property: "opacity",
+                from: 0.3,
+                to: 1.0,
+                dur: 1000,
+                dir: "alternate",
+                loop: true
+            });
+        }
     }
 
     // ─── Arranque ────────────────────────────────────────────────────

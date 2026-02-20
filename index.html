@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <meta name="description"
-    content="Museo de Pacho — Hub World interactivo 3D. Explora cinco salas temáticas en una experiencia inmersiva." />
-  <title>Museo de Pacho — Hub World</title>
+    content="Expedición P-5 — Un viaje espacial interactivo 3D. Explora universos desconocidos en una experiencia inmersiva." />
+  <title>Expedición P-5 — Hub World</title>
 
   <link rel="stylesheet" href="styles.css" />
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -37,7 +37,7 @@
     <!-- GLB is loaded directly via src attribute on gltf-model -->
 
     <!-- ── Sky ── -->
-    <a-sky id="sky" color="#1e1c28"></a-sky>
+    <a-sky id="sky" color="#050510"></a-sky>
 
     <!-- ── Lighting ── -->
     <a-light id="ambient-light" type="ambient" color="#8888AA" intensity="0.6"></a-light>
@@ -49,25 +49,67 @@
       position="0 6 0"></a-light>
 
     <!-- ── GROUND ── -->
-    <!-- Central hex platform -->
-    <a-cylinder id="platform-center" position="0 -0.05 0" radius="3.5" height="0.2" segments-radial="6" color="#2A2540"
-      material="roughness: 0.9; metalness: 0.1; flatShading: true; emissive: #1a1625; emissiveIntensity: 0.3">
-    </a-cylinder>
 
-    <!-- Inner disc -->
-    <a-cylinder position="0 0.06 0" radius="1.4" height="0.08" segments-radial="6" color="#352F4A"
-      material="roughness: 0.85; metalness: 0.15; flatShading: true; emissive: #2a2540; emissiveIntensity: 0.2">
-    </a-cylinder>
+    <!-- ── CENTRAL MUSEUM DISPLAY (Lecture Atril) ── -->
+    <a-entity id="central-display" position="0 -0.15 0" rotation="0 -90 0">
 
-    <!-- Center glow ring -->
-    <a-torus position="0 0.08 0" radius="1.2" radius-tubular="0.025" segments-tubular="48" segments-radial="8"
-      color="#6366F1" material="emissive: #6366F1; emissiveIntensity: 0.6; opacity: 0.7; transparent: true"
-      animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
-    </a-torus>
+      <!-- Legs (Dark Wood/Metal) -->
+      <a-box position="-0.8 0.45 0.3" width="0.1" height="0.9" depth="0.1" color="#2A2320" material="roughness: 0.8"
+        shadow="cast: true"></a-box>
+      <a-box position=" 0.8 0.45 0.3" width="0.1" height="0.9" depth="0.1" color="#2A2320" material="roughness: 0.8"
+        shadow="cast: true"></a-box>
+      <a-box position="-0.8 0.6 -0.3" width="0.1" height="1.2" depth="0.1" color="#2A2320" material="roughness: 0.8"
+        shadow="cast: true"></a-box>
+      <a-box position=" 0.8 0.6 -0.3" width="0.1" height="1.2" depth="0.1" color="#2A2320" material="roughness: 0.8"
+        shadow="cast: true"></a-box>
+
+      <!-- Structural Crossbars -->
+      <a-box position="0 0.8 0" width="1.6" height="0.05" depth="0.6" color="#2A2320" visible="false"></a-box>
+
+      <!-- Slanted Top Surface (Cream/Paper) -->
+      <!-- Rotated ~25 degrees -->
+      <a-entity position="0 0.95 0" rotation="-25 0 0">
+        <!-- Main Board (Interactive Click Target) -->
+        <!-- Main Board (Interactive Click Target) -->
+        <a-box id="lectern-top" class="interactive" width="2.0" height="0.08" depth="1.2" color="#F2E8D5"
+          material="roughness: 0.6; metalness: 0.1" shadow="cast: true; receive: true"
+          cursor-listener="stationId: 99"></a-box> <!-- ID 99 for Intro -->
+
+        <!-- START PROMPT -->
+        <a-entity id="start-prompt" position="0 0.5 -0.2"
+          animation="property: position; to: 0 0.6 -0.2; dir: alternate; dur: 1500; loop: true">
+          <a-text value="HAZ CLIC PARA COMENZAR" align="center" color="#FFF" width="4"
+            font="https://cdn.aframe.io/fonts/Roboto-msdf.json" shader="msdf" negate="false"
+            position="0 0 0.02"></a-text>
+          <a-plane width="3.2" height="0.5" color="#000" opacity="0.6" material="transparent: true"></a-plane>
+        </a-entity>
+
+        <!-- Content Plane (Text/Graphics) -->
+        <a-entity position="0 0.05 0" rotation="-90 0 0">
+          <!-- Title -->
+          <a-text value="EXPEDICION P-5" color="#3E2723" align="center" width="5" position="0 0.4 -0.01"
+            font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="5"></a-text>
+
+          <a-text value="HISTORIA VIVA" color="#5D4037" align="center" width="2.5" position="0 0.25 -0.01"
+            font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="8"></a-text>
+
+          <!-- Divider stroke -->
+          <a-plane width="1.5" height="0.01" color="#3E2723" position="0 0.15 -0.01"></a-plane>
+
+          <!-- Shorter prompt since long text is in panel -->
+          <a-text value="Inicia la exploracion\ninteractiva" color="#4E342E" align="center" width="1.8"
+            position="0 -0.1 -0.01" line-height="60"></a-text>
+
+          <!-- Simulated Image/Photo -->
+          <a-plane position="0 -0.35 -0.01" width="0.5" height="0.35" color="#D7CCC8" opacity="0.8"></a-plane>
+        </a-entity>
+      </a-entity>
+
+    </a-entity>
 
     <!-- Ground plane -->
     <a-plane position="0 -0.15 0" rotation="-90 0 0" width="60" height="60" color="#16141F"
-      material="roughness: 1.0; metalness: 0.0; flatShading: true">
+      material="roughness: 1.0; metalness: 0.0; flatShading: true" shadow="receive: true">
     </a-plane>
 
     <!-- ── Floating particles (ambient atmosphere) ── -->
@@ -120,10 +162,13 @@
         <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2A2540"
           material="roughness: 0.85; flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2">
         </a-cylinder>
-        <!-- Pedestal -->
         <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#352F50"
           material="roughness: 0.85; flatShading: true; emissive: #2a2445; emissiveIntensity: 0.3">
         </a-cylinder>
+
+        <!-- PROGRESSION RING -->
+        <a-ring id="glow-ring-1" position="0 0.15 0" rotation="-90 0 0" radius-inner="0.6" radius-outer="0.7"
+          color="#6366F1" opacity="0" transparent="true" material="shader: flat"></a-ring>
 
         <!-- Estación 1: Tetraedro (placeholder) -->
         <a-tetrahedron id="glb-1" position="0 1.1 0" radius="0.6" color="#818CF8" class="interactive"
@@ -131,7 +176,7 @@
           material="roughness: 0.65; flatShading: true; emissive: #6366F1; emissiveIntensity: 0.15"
           animation="property: rotation; to: 0 360 0; loop: true; dur: 24000; easing: linear"></a-tetrahedron>
 
-        <a-text value="Sala Memphiana" align="center" color="#D0BCFF" width="4" position="0 3.0 0"
+        <a-text value="Nucleo de Origen" align="center" color="#D0BCFF" width="4" position="0 3.0 0"
           font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
       </a-entity>
     </a-entity>
@@ -154,9 +199,12 @@
         <!-- Platform -->
         <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#222E28"
           material="roughness: 0.85; flatShading: true; emissive: #1a2520; emissiveIntensity: 0.2"></a-cylinder>
-        <!-- Pedestal -->
         <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#2D3F33"
           material="roughness: 0.85; flatShading: true; emissive: #243528; emissiveIntensity: 0.3"></a-cylinder>
+
+        <!-- PROGRESSION RING -->
+        <a-ring id="glow-ring-2" position="0 0.15 0" rotation="-90 0 0" radius-inner="0.6" radius-outer="0.7"
+          color="#10B981" opacity="0" transparent="true" material="shader: flat"></a-ring>
 
         <!-- Estación 2: Arduino v2 -->
         <a-entity id="glb-2-container" position="0 0.75 0">
@@ -167,7 +215,7 @@
           </a-gltf-model>
         </a-entity>
 
-        <a-text value="Sala Histórica" align="center" color="#B0F5D8" width="4" position="0 3.0 0"
+        <a-text value="Archivo de Galaxias" align="center" color="#B0F5D8" width="4" position="0 3.0 0"
           font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
       </a-entity>
     </a-entity>
@@ -192,9 +240,12 @@
         <!-- Platform -->
         <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2A2540"
           material="roughness: 0.85; flatShading: true; emissive: #221F38; emissiveIntensity: 0.2"></a-cylinder>
-        <!-- Pedestal -->
         <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#3A3055"
           material="roughness: 0.85; flatShading: true; emissive: #302848; emissiveIntensity: 0.3"></a-cylinder>
+
+        <!-- PROGRESSION RING -->
+        <a-ring id="glow-ring-3" position="0 0.15 0" rotation="-90 0 0" radius-inner="0.6" radius-outer="0.7"
+          color="#8B5CF6" opacity="0" transparent="true" material="shader: flat"></a-ring>
 
         <!-- Estación 3: Diamante -->
         <a-entity id="glb-3-container" position="0 0.75 0">
@@ -205,20 +256,12 @@
           </a-gltf-model>
         </a-entity>
 
-        <a-text value="Sala Arte" align="center" color="#D0BCFF" width="4" position="0 3.0 0"
+        <a-text value="Nebulosa Creativa" align="center" color="#D0BCFF" width="4" position="0 3.0 0"
           font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
       </a-entity>
     </a-entity>
 
-    <!-- ── Decorative columns ── -->
-    <a-cylinder position=" 2.4 0.6 0" radius="0.12" height="1.4" color="#2A2540"
-      material="flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2"></a-cylinder>
-    <a-cylinder position="-2.4 0.6 0" radius="0.12" height="1.4" color="#2A2540"
-      material="flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2"></a-cylinder>
-    <a-cylinder position=" 0   0.6 2.4" radius="0.12" height="1.4" color="#2A2540"
-      material="flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2"></a-cylinder>
-    <a-cylinder position=" 0   0.6 -2.4" radius="0.12" height="1.4" color="#2A2540"
-      material="flatShading: true; emissive: #1f1a35; emissiveIntensity: 0.2"></a-cylinder>
+
 
     <!-- ══════════════════════════════════════════════════════════════ -->
     <!-- ── STATION 4 ─ 216° ─ Sala Naturaleza ───────────────────── -->
@@ -237,9 +280,12 @@
         <!-- Platform -->
         <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#1E2E22"
           material="roughness: 0.85; flatShading: true; emissive: #18251C; emissiveIntensity: 0.2"></a-cylinder>
-        <!-- Pedestal -->
         <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#2A4030"
           material="roughness: 0.85; flatShading: true; emissive: #223528; emissiveIntensity: 0.3"></a-cylinder>
+
+        <!-- PROGRESSION RING -->
+        <a-ring id="glow-ring-4" position="0 0.15 0" rotation="-90 0 0" radius-inner="0.6" radius-outer="0.7"
+          color="#22C55E" opacity="0" transparent="true" material="shader: flat"></a-ring>
 
         <!-- GLB: MEMPHIS3 -->
         <a-entity id="glb-4-container" position="0 0.75 0">
@@ -250,7 +296,7 @@
           </a-gltf-model>
         </a-entity>
 
-        <a-text value="Sala Naturaleza" align="center" color="#B0F5D8" width="4" position="0 3.0 0"
+        <a-text value="Bio-Dominio" align="center" color="#B0F5D8" width="4" position="0 3.0 0"
           font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
       </a-entity>
     </a-entity>
@@ -272,9 +318,12 @@
         <!-- Platform -->
         <a-cylinder position="0 0 0" radius="2.0" height="0.16" segments-radial="6" color="#2E2818"
           material="roughness: 0.85; flatShading: true; emissive: #252015; emissiveIntensity: 0.2"></a-cylinder>
-        <!-- Pedestal -->
         <a-cylinder position="0 0.35 0" radius="0.3" height="0.55" color="#403820"
           material="roughness: 0.85; flatShading: true; emissive: #352D18; emissiveIntensity: 0.3"></a-cylinder>
+
+        <!-- PROGRESSION RING -->
+        <a-ring id="glow-ring-5" position="0 0.15 0" rotation="-90 0 0" radius-inner="0.6" radius-outer="0.7"
+          color="#F59E0B" opacity="0" transparent="true" material="shader: flat"></a-ring>
 
         <!-- Placeholder: dodecahedron -->
         <a-dodecahedron id="glb-5" position="0 1.0 0" radius="0.55" color="#B58E2E" class="interactive"
@@ -282,7 +331,7 @@
           material="roughness: 0.65; flatShading: true; emissive: #F59E0B; emissiveIntensity: 0.15"
           animation="property: rotation; to: 0 360 0; loop: true; dur: 22000; easing: linear"></a-dodecahedron>
 
-        <a-text value="Sala Comunidad" align="center" color="#FFE8A8" width="4" position="0 3.0 0"
+        <a-text value="Alianza de Mundos" align="center" color="#FFE8A8" width="4" position="0 3.0 0"
           font="https://cdn.aframe.io/fonts/Roboto-msdf.json" letter-spacing="10" billboard></a-text>
       </a-entity>
     </a-entity>
@@ -301,7 +350,7 @@
   <!-- ── HUD Overlay ── -->
   <div id="hud">
     <div id="top-bar">
-      <span class="museum-name">Museo de Pacho</span>
+      <span class="museum-name">Expedición P-5</span>
       <span class="sep"></span>
       <span class="hub-name">Hub World</span>
     </div>
