@@ -80,8 +80,8 @@ const STATIONS = [
     accentColor: "#F59E0B",
     glowColor: "#FBBF24",
     activity: {
-      type: "video",
-      label: "Explorar en Inmersión 3D"
+      type: "wasa-configurator",
+      label: "Explorar Variantes WASA"
     }
   }
 ];
