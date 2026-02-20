@@ -38,9 +38,9 @@ const STATIONS = [
   },
   {
     id: 3,
-    name: "Núcleo de Origen",
-    subtitle: "Base Estelar Memphiana",
-    description: "Inicia tu viaje en el centro de mando.\nAquí convergen los saberes fundamentales\nque impulsan nuestra exploración espacial.",
+    name: "AVIONETA",
+    subtitle: "Auto CAD",
+    description: "Francisco Mendoza\nMdf",
     angle: 144,
     radius: 8,
     glb: "20_2_2026.glb",
