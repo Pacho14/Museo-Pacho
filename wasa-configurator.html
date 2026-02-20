@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WASA — Configurador de Variantes</title>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #080612;
+            overflow: hidden;
+        }
+
+        /* ── Exit Button ── */
+        .exit-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+            transition: background 0.2s;
+        }
+
+        .exit-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        /* ── Title Bar ── */
+        #title-bar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        #title-bar h1 {
+            font-size: 1.1rem;
+            font-weight: 900;
+            letter-spacing: 0.35em;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+        }
+
+        #title-bar p {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.15em;
+            margin-top: 4px;
+        }
+
+        /* ── Loading Indicator ── */
+        #loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        #loading-indicator.visible {
+            opacity: 1;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(245, 158, 11, 0.2);
+            border-top-color: #F59E0B;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #loading-indicator span {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* ── Variant Selector Panel ── */
+        #variant-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 24px 24px 36px;
+            background: linear-gradient(to top, rgba(8, 6, 18, 0.98) 70%, transparent);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #variant-panel .panel-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        #variant-buttons {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .variant-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            transition: transform 0.2s ease;
+        }
+
+        .variant-btn:hover {
+            transform: translateY(-4px);
+        }
+
+        .variant-swatch {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .variant-btn.active .variant-swatch {
+            border-color: #F59E0B;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4);
+            transform: scale(1.12);
+        }
+
+        .variant-btn span {
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.5);
+            transition: color 0.2s;
+        }
+
+        .variant-btn.active span {
+            color: #F59E0B;
+        }
+
+        /* Active check mark */
+        .variant-btn.active .variant-swatch::after {
+            content: '✓';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: white;
+        }
+
+        /* ── Status message ── */
+        #status-msg {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #F59E0B;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+        }
+
+        #status-msg.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Exit -->
+    <button class="exit-btn" onclick="window.location.href='index.html'">✕</button>
+
+    <!-- Title -->
+    <div id="title-bar">
+        <h1>WASA</h1>
+        <p>Selecciona una variante</p>
+    </div>
+
+    <!-- Status -->
+    <div id="status-msg"></div>
+
+    <!-- Loading -->
+    <div id="loading-indicator">
+        <div class="spinner"></div>
+        <span>Cargando variante...</span>
+    </div>
+
+    <!-- Variant Selector UI -->
+    <div id="variant-panel">
+        <div class="panel-label">Elige tu variante</div>
+        <div id="variant-buttons">
+            <button class="variant-btn active" data-variant="0" onclick="selectVariant(0)">
+                <div class="variant-swatch" style="background: linear-gradient(135deg, #8B6914, #C49A28);"></div>
+                <span>Original</span>
+            </button>
+            <button class="variant-btn" data-variant="1" onclick="selectVariant(1)">
+                <div class="variant-swatch" style="background: linear-gradient(135deg, #2A3545, #4A6080);"></div>
+                <span>Variante 2</span>
+            </button>
+            <button class="variant-btn" data-variant="2" onclick="selectVariant(2)">
+                <div class="variant-swatch" style="background: linear-gradient(135deg, #3D2014, #6B3520);"></div>
+                <span>Variante 3</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- A-Frame Scene -->
+    <a-scene renderer="colorManagement: true; antialias: true; physicallyCorrectLights: true"
+        loading-screen="dotsColor: #F59E0B; backgroundColor: #080612" vr-mode-ui="enabled: false">
+
+        <!-- Sky -->
+        <a-sky color="#080612" radius="30"></a-sky>
+
+        <!-- Subtle grid floor -->
+        <a-plane position="0 -0.01 0" rotation="-90 0 0" width="30" height="30" color="#1a1530"
+            material="opacity: 0.25; transparent: true; shader: flat; wireframe: true"></a-plane>
+
+        <!-- Ambient + directional lighting -->
+        <a-light type="ambient" intensity="0.5" color="#D0C8FF"></a-light>
+        <a-light type="directional" position="3 5 3" intensity="1.2" color="#fff" cast-shadow="true"></a-light>
+        <a-light type="directional" position="-3 4 -2" intensity="0.4" color="#A78BFA"></a-light>
+        <a-light type="point" position="0 3 0" intensity="0.6" color="#F59E0B" distance="8"></a-light>
+
+        <!-- Platform ring glow -->
+        <a-ring position="0 0.01 0" rotation="-90 0 0" radius-inner="1.2" radius-outer="1.35" color="#F59E0B"
+            material="emissive: #F59E0B; emissiveIntensity: 0.5; shader: flat; opacity: 0.6; transparent: true"
+            animation="property: rotation; to: -90 0 360; loop: true; dur: 12000; easing: linear">
+        </a-ring>
+
+        <!-- Model Container — only ONE model visible at a time -->
+        <a-entity id="model-container" position="0 0.1 0">
+            <!-- Variant 0: 14.glb (loaded immediately as default) -->
+            <a-gltf-model id="model-0" src="./14.glb" visible="true" auto-scale="maxSize: 2.5"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 18000; easing: linear">
+            </a-gltf-model>
+            <!-- Variants 1 & 2 are NOT loaded yet (lazy) -->
+            <a-entity id="model-1" visible="false"></a-entity>
+            <a-entity id="model-2" visible="false"></a-entity>
+        </a-entity>
+
+        <!-- Camera -->
+        <a-entity id="camera-rig" position="0 1.5 4">
+            <a-camera look-controls="enabled: true; magicWindowTrackingEnabled: true" wasd-controls="enabled: false"
+                fov="60">
+            </a-camera>
+        </a-entity>
+
+    </a-scene>
+
+    <script>
+        // ── Register auto-scale component (same as index.html) ──────
+        AFRAME.registerComponent('auto-scale', {
+            schema: { maxSize: { type: 'number', default: 2.2 } },
+            init: function () {
+                const el = this.el;
+                el.addEventListener('model-loaded', () => {
+                    const obj = el.getObject3D('mesh');
+                    if (!obj) return;
+
+                    // Force visibility
+                    obj.traverse(child => {
+                        if (child.isMesh) {
+                            child.visible = true;
+                            if (child.material) {
+                                child.material.side = THREE.DoubleSide;
+                                child.material.transparent = false;
+                                child.material.opacity = 1.0;
+                            }
+                        }
+                    });
+
+                    // Center + base-align the mesh
+                    const box = new THREE.Box3().setFromObject(obj);
+                    const center = new THREE.Vector3();
+                    box.getCenter(center);
+                    const localCenter = el.object3D.worldToLocal(center.clone());
+                    const minPoint = new THREE.Vector3(center.x, box.min.y, center.z);
+                    const localMin = el.object3D.worldToLocal(minPoint.clone());
+                    obj.position.x -= localCenter.x;
+                    obj.position.z -= localCenter.z;
+                    obj.position.y -= localMin.y;
+
+                    // Scale to fit
+                    const size = new THREE.Vector3();
+                    box.getSize(size);
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    if (maxDim > 0) {
+                        const sf = this.data.maxSize / maxDim;
+                        el.setAttribute('scale', { x: sf, y: sf, z: sf });
+                    }
+                });
+            }
+        });
+
+        // ── Variant definitions ──────────────────────────────────
+        const VARIANTS = [
+            { id: 0, file: '14.glb', name: 'Original', loaded: true },
+            { id: 1, file: '15.glb', name: 'Variante 2', loaded: false },
+            { id: 2, file: '16.glb', name: 'Variante 3', loaded: false },
+        ];
+
+        let currentVariant = 0;
+        let isSwapping = false;
+
+        const loadingEl = document.getElementById('loading-indicator');
+        const statusMsg = document.getElementById('status-msg');
+
+        function showStatus(msg, duration = 2000) {
+            statusMsg.textContent = msg;
+            statusMsg.classList.add('visible');
+            setTimeout(() => statusMsg.classList.remove('visible'), duration);
+        }
+
+        function showLoading(show) {
+            loadingEl.classList.toggle('visible', show);
+        }
+
+        // ── Select a variant ─────────────────────────────────────
+        function selectVariant(variantIndex) {
+            if (variantIndex === currentVariant || isSwapping) return;
+            isSwapping = true;
+
+            const variant = VARIANTS[variantIndex];
+            const oldModelEl = document.getElementById(`model-${currentVariant}`);
+            const newModelEl = document.getElementById(`model-${variantIndex}`);
+
+            // Update button styles
+            document.querySelectorAll('.variant-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-variant="${variantIndex}"]`).classList.add('active');
+
+            // Hide old model
+            oldModelEl.setAttribute('visible', false);
+            if (oldModelEl.hasAttribute('animation')) {
+                oldModelEl.removeAttribute('animation');
+            }
+
+            // Lazy load: attach gltf-model only on first use
+            if (!variant.loaded) {
+                showLoading(true);
+                newModelEl.setAttribute('gltf-model', `./${variant.file}`);
+                newModelEl.setAttribute('auto-scale', 'maxSize: 2.5');
+                newModelEl.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 18000; easing: linear');
+
+                newModelEl.addEventListener('model-loaded', () => {
+                    variant.loaded = true;
+                    newModelEl.setAttribute('visible', true);
+                    showLoading(false);
+                    showStatus(`✓ ${variant.name} cargada`);
+                    isSwapping = false;
+                }, { once: true });
+
+                newModelEl.addEventListener('model-error', () => {
+                    showLoading(false);
+                    showStatus(`⚠ Error al cargar ${variant.name}`);
+                    oldModelEl.setAttribute('visible', true);
+                    document.querySelectorAll('.variant-btn').forEach(btn => btn.classList.remove('active'));
+                    document.querySelector(`[data-variant="${currentVariant}"]`).classList.add('active');
+                    isSwapping = false;
+                }, { once: true });
+
+            } else {
+                // Already loaded — just show it
+                newModelEl.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 18000; easing: linear');
+                newModelEl.setAttribute('visible', true);
+                showStatus(`✓ ${variant.name}`);
+                isSwapping = false;
+            }
+
+            currentVariant = variantIndex;
+        }
+
+        // Show status when default model (Variant 0) finishes loading
+        document.addEventListener('DOMContentLoaded', () => {
+            const m0 = document.getElementById('model-0');
+            m0.addEventListener('model-loaded', () => {
+                showStatus('✓ WASA cargada');
+            }, { once: true });
+        });
+    </script>
+
+</body>
+
+</html>
