@@ -291,7 +291,7 @@
         <!-- Model Container — only ONE model visible at a time -->
         <a-entity id="model-container" position="0 0 0">
             <!-- Variant 0: 14.glb (loaded immediately as default) -->
-            <a-gltf-model id="model-0" src="./14.glb" visible="true" auto-scale="maxSize: 2.5"
+            <a-gltf-model id="model-0" src="./14.glb" visible="true" auto-scale="maxSize: 1.6"
                 animation="property: rotation; to: 0 360 0; loop: true; dur: 18000; easing: linear">
             </a-gltf-model>
             <!-- Variants 1 & 2 are NOT loaded yet (lazy) -->
@@ -398,7 +398,7 @@
             if (!variant.loaded) {
                 showLoading(true);
                 newModelEl.setAttribute('gltf-model', `./${variant.file}`);
-                newModelEl.setAttribute('auto-scale', 'maxSize: 2.5');
+                newModelEl.setAttribute('auto-scale', 'maxSize: 1.6');
                 newModelEl.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 18000; easing: linear');
 
                 newModelEl.addEventListener('model-loaded', () => {
